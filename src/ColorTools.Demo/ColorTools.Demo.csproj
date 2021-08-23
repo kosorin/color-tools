@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net5.0-windows</TargetFramework>
+        <TargetFramework>net5.0-windows10.0.18362.0</TargetFramework>
         <UseWPF>true</UseWPF>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ColorTools\ColorTools.csproj"/>
+        <ProjectReference Include="..\ColorTools\ColorTools.csproj" />
     </ItemGroup>
 
 </Project>
