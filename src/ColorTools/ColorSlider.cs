@@ -33,6 +33,9 @@ namespace ColorTools
         public static readonly DependencyProperty HeaderTemplateProperty =
             DependencyProperty.Register(nameof(HeaderTemplate), typeof(DataTemplate), typeof(ColorSlider), new PropertyMetadata(null));
 
+        public static readonly RoutedEvent ValueChangedEvent =
+            EventManager.RegisterRoutedEvent(nameof(ValueChanged), RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<double>), typeof(ColorSlider));
+
         private Canvas? _sliderCanvas;
 
         private bool _isValueUpdating;
@@ -206,11 +209,17 @@ namespace ColorTools
 
                 CoerceValue();
 
+                var newValue = Value;
+
                 // ReSharper disable once CompareOfFloatsByEqualityOperator
-                if (Value != oldValue)
+                if (oldValue == newValue)
                 {
-                    UpdateHandleCurrentPosition();
+                    return;
                 }
+
+                UpdateHandleCurrentPosition();
+
+                RaiseEvent(new RoutedPropertyChangedEventArgs<double>(oldValue, newValue, ValueChangedEvent));
             }
             finally
             {
@@ -436,6 +445,12 @@ namespace ColorTools
                 var v => v,
             };
             return min + value * (max - min);
+        }
+
+        public event RoutedPropertyChangedEventHandler<double> ValueChanged
+        {
+            add => AddHandler(ValueChangedEvent, value);
+            remove => RemoveHandler(ValueChangedEvent, value);
         }
     }
 }
