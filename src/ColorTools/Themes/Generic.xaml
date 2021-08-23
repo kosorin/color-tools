@@ -12,4 +12,82 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="{x:Type color:ColorSlider}">
+        <Setter Property="Height" Value="24" />
+        <Setter Property="BorderBrush" Value="Gray" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type color:ColorSlider}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="ColorSliderHeader" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="50" SharedSizeGroup="ColorSliderValue" />
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter Grid.Column="0"
+                                          VerticalAlignment="Center"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}" />
+                        <Border x:Name="Slider"
+                                Grid.Column="1"
+                                Margin="8,0"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <Border.Background>
+                                <DrawingBrush TileMode="Tile"
+                                              Viewport="0,0,10,10"
+                                              ViewportUnits="Absolute">
+                                    <DrawingBrush.Drawing>
+                                        <DrawingGroup>
+                                            <GeometryDrawing Brush="White">
+                                                <GeometryDrawing.Geometry>
+                                                    <RectangleGeometry Rect="0,0 100,100" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Brush="LightGray">
+                                                <GeometryDrawing.Geometry>
+                                                    <GeometryGroup>
+                                                        <RectangleGeometry Rect="0,0 50,50" />
+                                                        <RectangleGeometry Rect="50,50 50,50" />
+                                                    </GeometryGroup>
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                        </DrawingGroup>
+                                    </DrawingBrush.Drawing>
+                                </DrawingBrush>
+                            </Border.Background>
+                            <Canvas x:Name="SliderCanvas">
+                                <Canvas.Background>
+                                    <LinearGradientBrush x:Name="SliderCanvasGradient" />
+                                </Canvas.Background>
+                                <Border x:Name="Handle"
+                                        Width="10"
+                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}}"
+                                        Background="Transparent"
+                                        BorderBrush="Black"
+                                        BorderThickness="1"
+                                        IsHitTestVisible="False">
+                                    <Border.RenderTransform>
+                                        <TransformGroup>
+                                            <TranslateTransform X="-5" />
+                                            <TranslateTransform x:Name="HandleTransform" />
+                                        </TransformGroup>
+                                    </Border.RenderTransform>
+                                    <Border Background="Transparent"
+                                            BorderBrush="White"
+                                            BorderThickness="1" />
+                                </Border>
+                            </Canvas>
+                        </Border>
+                        <TextBox Grid.Column="2"
+                                 VerticalAlignment="Stretch"
+                                 VerticalContentAlignment="Center"
+                                 InputScope=""
+                                 Text="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource TemplatedParent}}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
