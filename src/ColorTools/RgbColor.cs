@@ -60,7 +60,7 @@ namespace ColorTools
             return this;
         }
 
-        public HsvColor ToHsv()
+        public HsbColor ToHsb()
         {
             var max = R;
             if (max < G)
@@ -113,7 +113,7 @@ namespace ColorTools
                 s = delta / max;
             }
 
-            return new HsvColor(h * 60, s * 100, v * 100);
+            return new HsbColor(h * 60, s * 100, v * 100);
         }
 
         public HslColor ToHsl()

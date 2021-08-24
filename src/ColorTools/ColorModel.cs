@@ -3,7 +3,7 @@ namespace ColorTools
     public enum ColorModel
     {
         Rgb,
-        Hsv,
+        Hsb,
         Hsl,
     }
 }

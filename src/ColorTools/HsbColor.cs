@@ -2,9 +2,9 @@
 
 namespace ColorTools
 {
-    public readonly struct HsvColor : IColor
+    public readonly struct HsbColor : IColor
     {
-        public HsvColor(double h, double s, double v)
+        public HsbColor(double h, double s, double b)
         {
             while (h < 0)
             {
@@ -21,11 +21,11 @@ namespace ColorTools
                 > 100 => 100,
                 _ => s,
             };
-            V = v switch
+            B = b switch
             {
                 < 0 => 0,
                 > 100 => 100,
-                _ => v,
+                _ => b,
             };
         }
 
@@ -40,9 +40,9 @@ namespace ColorTools
         public double S { get; }
 
         /// <summary>
-        /// Brightness (value) [0,100]
+        /// Brightness/Value [0,100]
         /// </summary>
-        public double V { get; }
+        public double B { get; }
 
         public Color ToColor()
         {
@@ -60,7 +60,7 @@ namespace ColorTools
 
             var h = H / 60;
             var s = S / 100;
-            var v = V / 100;
+            var v = B / 100;
 
             if (s == 0)
             {
@@ -116,17 +116,17 @@ namespace ColorTools
             return new RgbColor(r * 255, g * 255, b * 255);
         }
 
-        public HsvColor ToHsv()
+        public HsbColor ToHsb()
         {
             return this;
         }
 
         public HslColor ToHsl()
         {
-            var l = V - V * S / 200;
+            var l = B - B * S / 200;
             var ml = l < 50 ? l : 100 - l;
             var s = ml > 0
-                ? 100 * (V - l) / ml
+                ? 100 * (B - l) / ml
                 : 0;
             return new HslColor(H, s, l);
         }

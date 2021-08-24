@@ -10,7 +10,7 @@ namespace ColorTools
 
         RgbColor ToRgb();
 
-        HsvColor ToHsv();
+        HsbColor ToHsb();
 
         HslColor ToHsl();
     }

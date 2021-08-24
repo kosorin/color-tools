@@ -107,14 +107,14 @@ namespace ColorTools
             }
         }
 
-        public HsvColor ToHsv()
+        public HsbColor ToHsb()
         {
             var ml = L < 50 ? L : 100 - L;
-            var v = S * ml * 0.01 + L;
-            var s = v > 0
-                ? 200 - 200 * L / v
+            var b = S * ml * 0.01 + L;
+            var s = b > 0
+                ? 200 - 200 * L / b
                 : 0;
-            return new HsvColor(H, s, v);
+            return new HsbColor(H, s, b);
         }
 
         public HslColor ToHsl()

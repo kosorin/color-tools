@@ -57,23 +57,23 @@
                                                        Minimum="0" />
                                 </StackPanel>
                             </TabItem>
-                            <TabItem Header="HSV" Tag="{x:Type color:HsvColor}">
+                            <TabItem Header="HSV" Tag="{x:Type color:HsbColor}">
                                 <StackPanel Margin="8,8,8,0">
-                                    <color:ColorSlider x:Name="HsvHueComponent"
+                                    <color:ColorSlider x:Name="HsbHueComponent"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        GradientStopCount="7"
                                                        Header="Hue"
                                                        Maximum="360"
                                                        Minimum="0" />
-                                    <color:ColorSlider x:Name="HsvSaturationComponent"
+                                    <color:ColorSlider x:Name="HsbSaturationComponent"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        GradientStopCount="2"
                                                        Header="Saturation"
                                                        Maximum="100"
                                                        Minimum="0" />
-                                    <color:ColorSlider x:Name="HsvValueComponent"
+                                    <color:ColorSlider x:Name="HsbBrightnessComponent"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        GradientStopCount="2"

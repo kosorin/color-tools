@@ -9,9 +9,9 @@ namespace ColorTools
     [TemplatePart(Name = nameof(RgbRedComponent), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(RgbGreenComponent), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(RgbBlueComponent), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HsvHueComponent), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HsvSaturationComponent), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HsvValueComponent), Type = typeof(ColorSlider))]
+    [TemplatePart(Name = nameof(HsbHueComponent), Type = typeof(ColorSlider))]
+    [TemplatePart(Name = nameof(HsbSaturationComponent), Type = typeof(ColorSlider))]
+    [TemplatePart(Name = nameof(HsbBrightnessComponent), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HslHueComponent), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HslSaturationComponent), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HslLightnessComponent), Type = typeof(ColorSlider))]
@@ -48,9 +48,9 @@ namespace ColorTools
             RgbRedComponent = new ColorComponent(OnRgbChanged);
             RgbGreenComponent = new ColorComponent(OnRgbChanged);
             RgbBlueComponent = new ColorComponent(OnRgbChanged);
-            HsvHueComponent = new ColorComponent(OnHsvChanged);
-            HsvSaturationComponent = new ColorComponent(OnHsvChanged);
-            HsvValueComponent = new ColorComponent(OnHsvChanged);
+            HsbHueComponent = new ColorComponent(OnHsbChanged);
+            HsbSaturationComponent = new ColorComponent(OnHsbChanged);
+            HsbBrightnessComponent = new ColorComponent(OnHsbChanged);
             HslHueComponent = new ColorComponent(OnHslChanged);
             HslSaturationComponent = new ColorComponent(OnHslChanged);
             HslLightnessComponent = new ColorComponent(OnHslChanged);
@@ -96,11 +96,11 @@ namespace ColorTools
 
         private ColorComponent RgbBlueComponent { get; }
 
-        private ColorComponent HsvHueComponent { get; }
+        private ColorComponent HsbHueComponent { get; }
 
-        private ColorComponent HsvSaturationComponent { get; }
+        private ColorComponent HsbSaturationComponent { get; }
 
-        private ColorComponent HsvValueComponent { get; }
+        private ColorComponent HsbBrightnessComponent { get; }
 
         private ColorComponent HslHueComponent { get; }
 
@@ -142,9 +142,9 @@ namespace ColorTools
             RgbRedComponent.AttachSlider(GetTemplateChild(nameof(RgbRedComponent)) as ColorSlider);
             RgbGreenComponent.AttachSlider(GetTemplateChild(nameof(RgbGreenComponent)) as ColorSlider);
             RgbBlueComponent.AttachSlider(GetTemplateChild(nameof(RgbBlueComponent)) as ColorSlider);
-            HsvHueComponent.AttachSlider(GetTemplateChild(nameof(HsvHueComponent)) as ColorSlider);
-            HsvSaturationComponent.AttachSlider(GetTemplateChild(nameof(HsvSaturationComponent)) as ColorSlider);
-            HsvValueComponent.AttachSlider(GetTemplateChild(nameof(HsvValueComponent)) as ColorSlider);
+            HsbHueComponent.AttachSlider(GetTemplateChild(nameof(HsbHueComponent)) as ColorSlider);
+            HsbSaturationComponent.AttachSlider(GetTemplateChild(nameof(HsbSaturationComponent)) as ColorSlider);
+            HsbBrightnessComponent.AttachSlider(GetTemplateChild(nameof(HsbBrightnessComponent)) as ColorSlider);
             HslHueComponent.AttachSlider(GetTemplateChild(nameof(HslHueComponent)) as ColorSlider);
             HslSaturationComponent.AttachSlider(GetTemplateChild(nameof(HslSaturationComponent)) as ColorSlider);
             HslLightnessComponent.AttachSlider(GetTemplateChild(nameof(HslLightnessComponent)) as ColorSlider);
@@ -248,14 +248,14 @@ namespace ColorTools
             UpdateColorPreview();
         }
 
-        private void OnHsvChanged()
+        private void OnHsbChanged()
         {
             if (_isUpdating)
             {
                 return;
             }
 
-            var color = new HsvColor(HsvHueComponent.Value, HsvSaturationComponent.Value, HsvValueComponent.Value);
+            var color = new HsbColor(HsbHueComponent.Value, HsbSaturationComponent.Value, HsbBrightnessComponent.Value);
 
             UpdateSelectedColor(color);
             UpdateAlphaComponent(AlphaComponent.Value, color);
@@ -350,10 +350,10 @@ namespace ColorTools
             RgbGreenComponent.SetValue(rgb.G, value => new RgbColor(rgb.R, value, rgb.B).ToColor());
             RgbBlueComponent.SetValue(rgb.B, value => new RgbColor(rgb.R, rgb.G, value).ToColor());
 
-            var hsv = color.ToHsv();
-            HsvHueComponent.SetValue(hsv.H, value => new HsvColor(value, hsv.S, hsv.V).ToColor());
-            HsvSaturationComponent.SetValue(hsv.S, value => new HsvColor(hsv.H, value, hsv.V).ToColor());
-            HsvValueComponent.SetValue(hsv.V, value => new HsvColor(hsv.H, hsv.S, value).ToColor());
+            var hsb = color.ToHsb();
+            HsbHueComponent.SetValue(hsb.H, value => new HsbColor(value, hsb.S, hsb.B).ToColor());
+            HsbSaturationComponent.SetValue(hsb.S, value => new HsbColor(hsb.H, value, hsb.B).ToColor());
+            HsbBrightnessComponent.SetValue(hsb.B, value => new HsbColor(hsb.H, hsb.S, value).ToColor());
 
             var hsl = color.ToHsl();
             HslHueComponent.SetValue(hsl.H, value => new HslColor(value, hsl.S, hsl.L).ToColor());
