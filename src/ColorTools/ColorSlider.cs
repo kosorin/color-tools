@@ -159,11 +159,11 @@ namespace ColorTools
             {
                 case Key.Left:
                 case Key.PageDown:
-                    ChangeValue(-1);
+                    MoveHandle(-1);
                     break;
                 case Key.Right:
                 case Key.PageUp:
-                    ChangeValue(1);
+                    MoveHandle(1);
                     break;
             }
         }
@@ -357,7 +357,7 @@ namespace ColorTools
                 return;
             }
 
-            ChangeValue(Math.Sign(args.Delta));
+            MoveHandle(Math.Sign(args.Delta));
         }
 
         private void SliderCanvas_SizeChanged(object sender, SizeChangedEventArgs args)
@@ -370,7 +370,7 @@ namespace ColorTools
             UpdateHandleCurrentPosition();
         }
 
-        private void ChangeValue(int sign)
+        private void MoveHandle(int sign)
         {
             if (sign == 0)
             {
