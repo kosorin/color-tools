@@ -243,6 +243,7 @@ namespace ColorTools
             var color = new RgbColor(RgbRedComponent.Value, RgbGreenComponent.Value, RgbBlueComponent.Value);
 
             UpdateSelectedColor(color);
+            UpdateAlphaComponent(AlphaComponent.Value, color);
             UpdateColorComponents(color);
             UpdateColorPreview();
         }
@@ -257,6 +258,7 @@ namespace ColorTools
             var color = new HsvColor(HsvHueComponent.Value, HsvSaturationComponent.Value, HsvValueComponent.Value);
 
             UpdateSelectedColor(color);
+            UpdateAlphaComponent(AlphaComponent.Value, color);
             UpdateColorComponents(color);
             UpdateColorPreview();
         }
@@ -271,6 +273,7 @@ namespace ColorTools
             var color = new HslColor(HslHueComponent.Value, HslSaturationComponent.Value, HslLightnessComponent.Value);
 
             UpdateSelectedColor(color);
+            UpdateAlphaComponent(AlphaComponent.Value, color);
             UpdateColorComponents(color);
             UpdateColorPreview();
         }
