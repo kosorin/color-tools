@@ -15,20 +15,21 @@ namespace ColorTools
 
             byte a, r, g, b;
 
-            Span<char> buffer = stackalloc char[2];
             var ns = NumberStyles.HexNumber;
             var ci = CultureInfo.InvariantCulture;
 
             var data = hex.AsSpan();
+
+            // Allow 0..n '#'
             while (data[0] == '#')
             {
                 data = data[1..];
             }
 
-            // A
             switch (data.Length)
             {
                 case 4:
+                    Span<char> buffer = stackalloc char[2];
                     // A
                     buffer[0] = data[0];
                     buffer[1] = data[0];
@@ -39,7 +40,7 @@ namespace ColorTools
                     data = data[1..];
                     break;
                 case 8:
-                    // A
+                    // AA
                     if (!byte.TryParse(data[..2], ns, ci, out a))
                     {
                         return false;
@@ -51,10 +52,10 @@ namespace ColorTools
                     break;
             }
 
-            // RGB
             switch (data.Length)
             {
                 case 3:
+                    Span<char> buffer = stackalloc char[2];
                     // R
                     buffer[0] = data[0];
                     buffer[1] = data[0];
@@ -78,17 +79,17 @@ namespace ColorTools
                     }
                     break;
                 case 6:
-                    // R
+                    // RR
                     if (!byte.TryParse(data[..2], ns, ci, out r))
                     {
                         return false;
                     }
-                    // G
+                    // GG
                     if (!byte.TryParse(data[2..4], ns, ci, out g))
                     {
                         return false;
                     }
-                    // B
+                    // BB
                     if (!byte.TryParse(data[4..6], ns, ci, out b))
                     {
                         return false;

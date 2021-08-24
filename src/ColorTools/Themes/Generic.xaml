@@ -5,15 +5,160 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type color:ColorPicker}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" />
+                    <StackPanel Grid.IsSharedSizeScope="True">
+                        <TabControl>
+                            <TabItem Header="HSL" Tag="{x:Type color:HslColor}">
+                                <StackPanel Margin="8,8,8,0">
+                                    <color:ColorSlider x:Name="HslHueComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="7"
+                                                       Header="Hue"
+                                                       Maximum="360"
+                                                       Minimum="0" />
+                                    <color:ColorSlider x:Name="HslSaturationComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="2"
+                                                       Header="Saturation"
+                                                       Maximum="100"
+                                                       Minimum="0" />
+                                    <color:ColorSlider x:Name="HslLightnessComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="3"
+                                                       Header="Lightness"
+                                                       Maximum="100"
+                                                       Minimum="0" />
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem Header="HSV" Tag="{x:Type color:HsvColor}">
+                                <StackPanel Margin="8,8,8,0">
+                                    <color:ColorSlider x:Name="HsvHueComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="7"
+                                                       Header="Hue"
+                                                       Maximum="360"
+                                                       Minimum="0" />
+                                    <color:ColorSlider x:Name="HsvSaturationComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="2"
+                                                       Header="Saturation"
+                                                       Maximum="100"
+                                                       Minimum="0" />
+                                    <color:ColorSlider x:Name="HsvValueComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="2"
+                                                       Header="Brightness"
+                                                       Maximum="100"
+                                                       Minimum="0" />
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem Header="RGB" Tag="{x:Type color:RgbColor}">
+                                <StackPanel Margin="8,8,8,0">
+                                    <color:ColorSlider x:Name="RgbRedComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="2"
+                                                       Header="Red"
+                                                       Maximum="255"
+                                                       Minimum="0" />
+                                    <color:ColorSlider x:Name="RgbGreenComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="2"
+                                                       Header="Green"
+                                                       Maximum="255"
+                                                       Minimum="0" />
+                                    <color:ColorSlider x:Name="RgbBlueComponent"
+                                                       Margin="0,0,0,8"
+                                                       GradientStopCount="2"
+                                                       Header="Blue"
+                                                       Maximum="255"
+                                                       Minimum="0" />
+                                </StackPanel>
+                            </TabItem>
+                        </TabControl>
+                        <StackPanel>
+                            <color:ColorSlider x:Name="AlphaComponent"
+                                               Margin="0,8,0,8"
+                                               GradientStopCount="2"
+                                               Header="Opacity"
+                                               Maximum="255"
+                                               Minimum="0" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock VerticalAlignment="Center" Text="Color" />
+                                    <Border Width="128"
+                                            Height="64"
+                                            HorizontalAlignment="Left"
+                                            BorderBrush="Gray"
+                                            BorderThickness="1">
+                                        <Border.Background>
+                                            <DrawingBrush TileMode="Tile"
+                                                          Viewport="0,0,10,10"
+                                                          ViewportUnits="Absolute">
+                                                <DrawingBrush.Drawing>
+                                                    <DrawingGroup>
+                                                        <GeometryDrawing Brush="White">
+                                                            <GeometryDrawing.Geometry>
+                                                                <RectangleGeometry Rect="0,0 100,100" />
+                                                            </GeometryDrawing.Geometry>
+                                                        </GeometryDrawing>
+                                                        <GeometryDrawing Brush="LightGray">
+                                                            <GeometryDrawing.Geometry>
+                                                                <GeometryGroup>
+                                                                    <RectangleGeometry Rect="0,0 50,50" />
+                                                                    <RectangleGeometry Rect="50,50 50,50" />
+                                                                </GeometryGroup>
+                                                            </GeometryDrawing.Geometry>
+                                                        </GeometryDrawing>
+                                                    </DrawingGroup>
+                                                </DrawingBrush.Drawing>
+                                            </DrawingBrush>
+                                        </Border.Background>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border x:Name="OriginalColorBorder"
+                                                    Grid.Column="0"
+                                                    Width="64">
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="{Binding OriginalColor, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                </Border.Background>
+                                            </Border>
+                                            <Border Grid.Column="1">
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                </Border.Background>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock VerticalAlignment="Center" Text="Hex" />
+                                    <TextBox Text="{Binding SelectedHex, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="OriginalColor" Value="{x:Null}">
+                            <Setter TargetName="OriginalColorBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ShowAlpha" Value="False">
+                            <Setter TargetName="AlphaComponent" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
     <Style TargetType="{x:Type color:ColorSlider}">
-        <Setter Property="Height" Value="24" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Height" Value="32" />
         <Setter Property="BorderBrush" Value="Gray" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Template">
@@ -71,7 +216,7 @@
                                     <Border.RenderTransform>
                                         <TransformGroup>
                                             <TranslateTransform X="-5" />
-                                            <TranslateTransform x:Name="HandleTransform" />
+                                            <TranslateTransform x:Name="HandleTranslateTransform" />
                                         </TransformGroup>
                                     </Border.RenderTransform>
                                     <Border Background="Transparent"

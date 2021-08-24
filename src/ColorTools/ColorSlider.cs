@@ -9,7 +9,7 @@ namespace ColorTools
 {
     [TemplatePart(Name = nameof(SliderCanvas), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(Handle), Type = typeof(Border))]
-    [TemplatePart(Name = nameof(HandleTransform), Type = typeof(TranslateTransform))]
+    [TemplatePart(Name = nameof(HandleTranslateTransform), Type = typeof(TranslateTransform))]
     public class ColorSlider : Control
     {
         private const int MinimumGradientStopCount = 2;
@@ -19,13 +19,13 @@ namespace ColorTools
                 new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged));
 
         public static readonly DependencyProperty MinimumProperty =
-            DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(ColorSlider), new PropertyMetadata(0d, OnMinimumChanged));
+            DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(ColorSlider), new PropertyMetadata(0d, OnMinimumPropertyChanged));
 
         public static readonly DependencyProperty MaximumProperty =
-            DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(ColorSlider), new PropertyMetadata(100d, OnMaximumChanged));
+            DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(ColorSlider), new PropertyMetadata(100d, OnMaximumPropertyChanged));
 
         public static readonly DependencyProperty GradientStopCountProperty =
-            DependencyProperty.Register(nameof(GradientStopCount), typeof(int), typeof(ColorSlider), new PropertyMetadata(MinimumGradientStopCount, OnGradientStopCount, CoerceGradientStopCountCallback));
+            DependencyProperty.Register(nameof(GradientStopCount), typeof(int), typeof(ColorSlider), new PropertyMetadata(MinimumGradientStopCount, OnGradientStopCountPropertyChanged, CoerceGradientStopCountProperty));
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register(nameof(Header), typeof(object), typeof(ColorSlider), new PropertyMetadata(null));
@@ -113,7 +113,7 @@ namespace ColorTools
 
         private Border? Handle { get; set; }
 
-        private TranslateTransform? HandleTransform { get; set; }
+        private TranslateTransform? HandleTranslateTransform { get; set; }
 
         public void UpdateGradient(Func<double, Color> colorFactory)
         {
@@ -141,7 +141,7 @@ namespace ColorTools
 
             SliderCanvas = GetTemplateChild(nameof(SliderCanvas)) as Canvas;
             Handle = GetTemplateChild(nameof(Handle)) as Border;
-            HandleTransform = GetTemplateChild(nameof(HandleTransform)) as TranslateTransform;
+            HandleTranslateTransform = GetTemplateChild(nameof(HandleTranslateTransform)) as TranslateTransform;
         }
 
         protected override void OnKeyDown(KeyEventArgs args)
@@ -167,7 +167,7 @@ namespace ColorTools
             }
         }
 
-        private static void OnMinimumChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private static void OnMinimumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             if (sender is ColorSlider slider)
             {
@@ -175,7 +175,7 @@ namespace ColorTools
             }
         }
 
-        private static void OnMaximumChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private static void OnMaximumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             if (sender is ColorSlider slider)
             {
@@ -183,15 +183,15 @@ namespace ColorTools
             }
         }
 
-        private static void OnGradientStopCount(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private static void OnGradientStopCountPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             if (sender is ColorSlider slider)
             {
-                slider.OnGradientStopCount();
+                slider.OnGradientStopCountChanged();
             }
         }
 
-        private static object CoerceGradientStopCountCallback(DependencyObject sender, object baseValue)
+        private static object CoerceGradientStopCountProperty(DependencyObject sender, object baseValue)
         {
             return baseValue is int value and >= MinimumGradientStopCount ? value : MinimumGradientStopCount;
         }
@@ -239,7 +239,7 @@ namespace ColorTools
             CoerceValue();
         }
 
-        private void OnGradientStopCount()
+        private void OnGradientStopCountChanged()
         {
             UpdateGradientBrush();
         }
@@ -385,9 +385,9 @@ namespace ColorTools
                 return;
             }
 
-            if (HandleTransform != null)
+            if (HandleTranslateTransform != null)
             {
-                HandleTransform.X = ValueToHandlePosition(Value, offset, width, Minimum, Maximum);
+                HandleTranslateTransform.X = ValueToHandlePosition(Value, offset, width, Minimum, Maximum);
             }
         }
 
@@ -399,9 +399,9 @@ namespace ColorTools
                 return;
             }
 
-            if (HandleTransform != null)
+            if (HandleTranslateTransform != null)
             {
-                HandleTransform.X = MousePositionToHandlePosition(mousePosition, offset, width);
+                HandleTranslateTransform.X = MousePositionToHandlePosition(mousePosition, offset, width);
             }
             SetCurrentValue(ValueProperty, MousePositionToValue(mousePosition, offset, width, Minimum, Maximum));
         }
