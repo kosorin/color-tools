@@ -18,7 +18,7 @@ namespace ColorTools
     public class ColorPicker : Control
     {
         private const byte MaxAlpha = 0xFF;
-        
+
         // TODO: Add routed events: SelectedColorChanged, SelectedHexChanged
 
         public static readonly DependencyProperty SelectedColorProperty =
@@ -34,6 +34,9 @@ namespace ColorTools
 
         public static readonly DependencyProperty ShowAlphaProperty =
             DependencyProperty.Register(nameof(ShowAlpha), typeof(bool), typeof(ColorPicker), new PropertyMetadata(true, OnShowAlphaPropertyChanged));
+
+        public static readonly DependencyProperty AlphaBrushProperty =
+            DependencyProperty.Register(nameof(AlphaBrush), typeof(Brush), typeof(ColorPicker), new PropertyMetadata(Brushes.Transparent));
 
         private bool _isUpdating;
 
@@ -77,6 +80,12 @@ namespace ColorTools
         {
             get => (bool)GetValue(ShowAlphaProperty);
             set => SetValue(ShowAlphaProperty, value);
+        }
+
+        public Brush AlphaBrush
+        {
+            get => (Brush)GetValue(AlphaBrushProperty);
+            set => SetValue(AlphaBrushProperty, value);
         }
 
         private ColorComponent AlphaComponent { get; }

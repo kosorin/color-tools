@@ -33,6 +33,9 @@ namespace ColorTools
         public static readonly DependencyProperty HeaderTemplateProperty =
             DependencyProperty.Register(nameof(HeaderTemplate), typeof(DataTemplate), typeof(ColorSlider), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty AlphaBrushProperty =
+            DependencyProperty.Register(nameof(AlphaBrush), typeof(Brush), typeof(ColorSlider), new PropertyMetadata(Brushes.Transparent));
+
         public static readonly RoutedEvent ValueChangedEvent =
             EventManager.RegisterRoutedEvent(nameof(ValueChanged), RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<double>), typeof(ColorSlider));
 
@@ -80,6 +83,12 @@ namespace ColorTools
         {
             get => (DataTemplate?)GetValue(HeaderTemplateProperty);
             set => SetValue(HeaderTemplateProperty, value);
+        }
+
+        public Brush AlphaBrush
+        {
+            get => (Brush)GetValue(AlphaBrushProperty);
+            set => SetValue(AlphaBrushProperty, value);
         }
 
         private Canvas? SliderCanvas
