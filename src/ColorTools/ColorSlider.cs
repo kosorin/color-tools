@@ -299,7 +299,7 @@ namespace ColorTools
             }
 
             var gradientStops = Enumerable.Range(0, stopCount).Select(x => new GradientStop(Colors.Transparent, x / (double)(stopCount - 1)));
-            SliderCanvas.Background = new LinearGradientBrush(new GradientStopCollection(gradientStops));
+            SliderCanvas.Background = new LinearGradientBrush(new GradientStopCollection(gradientStops), new Point(0, 0), new Point(1, 0));
         }
 
         private void SliderCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs args)
