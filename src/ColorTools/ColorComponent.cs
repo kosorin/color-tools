@@ -49,7 +49,7 @@ namespace ColorTools
         {
             if (_slider != null)
             {
-                _slider.ValueChanged -= OnValueChanged;
+                _slider.ValueChanged -= Slider_ValueChanged;
             }
 
             _slider = slider;
@@ -57,11 +57,11 @@ namespace ColorTools
             if (_slider != null)
             {
                 _slider.Value = Value;
-                _slider.ValueChanged += OnValueChanged;
+                _slider.ValueChanged += Slider_ValueChanged;
             }
         }
 
-        private void OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
         {
             Value = args.NewValue;
         }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -174,8 +173,6 @@ namespace ColorTools
             {
                 ReplaceSelectedColor(null);
             }
-
-            UpdateColorPreview();
         }
 
         private void OnSelectedHexChanged()
@@ -197,8 +194,6 @@ namespace ColorTools
             {
                 ReplaceSelectedColor(null);
             }
-
-            UpdateColorPreview();
         }
 
         private void OnShowAlphaChanged()
@@ -214,7 +209,6 @@ namespace ColorTools
 
             UpdateSelectedColor(color);
             UpdateAlphaComponent(AlphaComponent.Value, color);
-            UpdateColorPreview();
         }
 
         private void OnAlphaChanged()
@@ -230,7 +224,6 @@ namespace ColorTools
 
             UpdateSelectedColor(color);
             UpdateAlphaComponent(AlphaComponent.Value, color);
-            UpdateColorPreview();
         }
 
         private void OnRgbChanged()
@@ -245,7 +238,6 @@ namespace ColorTools
             UpdateSelectedColor(color);
             UpdateAlphaComponent(AlphaComponent.Value, color);
             UpdateColorComponents(color);
-            UpdateColorPreview();
         }
 
         private void OnHsbChanged()
@@ -260,7 +252,6 @@ namespace ColorTools
             UpdateSelectedColor(color);
             UpdateAlphaComponent(AlphaComponent.Value, color);
             UpdateColorComponents(color);
-            UpdateColorPreview();
         }
 
         private void OnHslChanged()
@@ -275,7 +266,6 @@ namespace ColorTools
             UpdateSelectedColor(color);
             UpdateAlphaComponent(AlphaComponent.Value, color);
             UpdateColorComponents(color);
-            UpdateColorPreview();
         }
 
         private void ReplaceSelectedColor(Color? color)
@@ -328,8 +318,6 @@ namespace ColorTools
             }
             _isUpdating = true;
 
-            Debug.WriteLine("Update alpha components");
-
             AlphaComponent.SetValue(alpha, value => color.ToColor((byte)value));
 
             _isUpdating = false;
@@ -342,8 +330,6 @@ namespace ColorTools
                 return;
             }
             _isUpdating = true;
-
-            Debug.WriteLine("Update color components");
 
             var rgb = color.ToRgb();
             RgbRedComponent.SetValue(rgb.R, value => new RgbColor(value, rgb.G, rgb.B).ToColor());
@@ -361,12 +347,6 @@ namespace ColorTools
             HslLightnessComponent.SetValue(hsl.L, value => new HslColor(hsl.H, hsl.S, value).ToColor());
 
             _isUpdating = false;
-        }
-
-        private void UpdateColorPreview()
-        {
-            // TODO
-            // SelectedColorPreviewBrush.Color = SelectedColor ?? Colors.Transparent;
         }
     }
 }
