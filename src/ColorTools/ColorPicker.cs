@@ -31,6 +31,9 @@ namespace ColorTools
         public static readonly DependencyProperty OriginalColorProperty =
             DependencyProperty.Register(nameof(OriginalColor), typeof(Color?), typeof(ColorPicker), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty AllowEmptyProperty =
+            DependencyProperty.Register(nameof(AllowEmpty), typeof(bool), typeof(ColorPicker), new PropertyMetadata(true, OnAllowEmptyPropertyChanged));
+
         public static readonly DependencyProperty AllowAlphaProperty =
             DependencyProperty.Register(nameof(AllowAlpha), typeof(bool), typeof(ColorPicker), new PropertyMetadata(true, OnAllowAlphaPropertyChanged));
 
@@ -73,6 +76,12 @@ namespace ColorTools
         {
             get => (Color?)GetValue(OriginalColorProperty);
             set => SetValue(OriginalColorProperty, value);
+        }
+
+        public bool AllowEmpty
+        {
+            get => (bool)GetValue(AllowEmptyProperty);
+            set => SetValue(AllowEmptyProperty, value);
         }
 
         public bool AllowAlpha
@@ -120,6 +129,14 @@ namespace ColorTools
             if (sender is ColorPicker colorPicker)
             {
                 colorPicker.OnSelectedHexChanged();
+            }
+        }
+
+        private static void OnAllowEmptyPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            if (sender is ColorPicker colorPicker)
+            {
+                colorPicker.OnAllowEmptyChanged();
             }
         }
 
@@ -194,6 +211,25 @@ namespace ColorTools
             {
                 ReplaceSelectedColor(null);
             }
+        }
+
+        private void OnAllowEmptyChanged()
+        {
+            if (_isUpdating)
+            {
+                return;
+            }
+
+            var color = SelectedColor switch
+            {
+                null when !AllowEmpty => new RgbColor(255, 255, 255),
+                { } selectedColor => new RgbColor(selectedColor),
+                _ => new RgbColor(RgbRedComponent.Value, RgbGreenComponent.Value, RgbBlueComponent.Value)
+            };
+
+            UpdateSelectedColor(color);
+            UpdateAlphaComponent(AlphaComponent.Value, color);
+            UpdateColorComponents(color);
         }
 
         private void OnAllowAlphaChanged()
@@ -275,6 +311,11 @@ namespace ColorTools
                 return;
             }
             _isUpdating = true;
+
+            if (!color.HasValue && !AllowEmpty)
+            {
+                color = Colors.White;
+            }
 
             if (color.HasValue)
             {
