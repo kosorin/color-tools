@@ -201,7 +201,7 @@ namespace ColorTools
             var color = SelectedColor switch
             {
                 null when !AllowEmpty => new RgbColor(255, 255, 255),
-                { } selectedColor => new RgbColor(selectedColor),
+                { } selectedColor => selectedColor.ToRgb(),
                 _ => new RgbColor(RgbRedComponent.Value, RgbGreenComponent.Value, RgbBlueComponent.Value)
             };
 
@@ -219,7 +219,7 @@ namespace ColorTools
 
             if (SelectedColor is { } selectedColor)
             {
-                var color = new RgbColor(selectedColor);
+                var color = selectedColor.ToRgb();
 
                 UpdateSelectedColor(color);
                 UpdateAlphaComponent(AlphaComponent.Value, color);
@@ -233,9 +233,7 @@ namespace ColorTools
                 return;
             }
 
-            var color = SelectedColor is { } selectedColor
-                ? new RgbColor(selectedColor)
-                : new RgbColor(RgbRedComponent.Value, RgbGreenComponent.Value, RgbBlueComponent.Value);
+            var color = SelectedColor?.ToRgb() ?? new RgbColor(RgbRedComponent.Value, RgbGreenComponent.Value, RgbBlueComponent.Value);
 
             UpdateSelectedColor(color);
             UpdateAlphaComponent(AlphaComponent.Value, color);
@@ -303,7 +301,7 @@ namespace ColorTools
                     SetCurrentValue(SelectedColorProperty, selectedColor.Value);
                     SetCurrentValue(SelectedHexProperty, selectedColor.Value.ToHex(AllowAlpha));
 
-                    var color = new RgbColor(selectedColor.Value);
+                    var color = selectedColor.Value.ToRgb();
 
                     UpdateAlphaComponent(selectedColor.Value.A, color);
                     UpdateColorComponents(color);

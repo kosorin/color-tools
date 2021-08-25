@@ -127,6 +127,21 @@ namespace ColorTools
             return hex;
         }
 
+        public static RgbColor ToRgb(this Color color)
+        {
+            return new RgbColor(color.R, color.G, color.B);
+        }
+
+        public static HsbColor ToHsb(this Color color)
+        {
+            return color.ToRgb().ToHsb();
+        }
+
+        public static HslColor ToHsl(this Color color)
+        {
+            return color.ToRgb().ToHsl();
+        }
+
         public static Color WithAlpha(this Color color, byte alpha)
         {
             return Color.FromArgb(alpha, color.R, color.G, color.B);

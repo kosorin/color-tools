@@ -26,10 +26,6 @@ namespace ColorTools
             };
         }
 
-        public RgbColor(Color color) : this(color.R, color.G, color.B)
-        {
-        }
-
         /// <summary>
         /// Red [0,255]
         /// </summary>
