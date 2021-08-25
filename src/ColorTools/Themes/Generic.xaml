@@ -161,7 +161,7 @@
                         <Trigger Property="OriginalColor" Value="{x:Null}">
                             <Setter TargetName="OriginalColorBorder" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <Trigger Property="ShowAlpha" Value="False">
+                        <Trigger Property="AllowAlpha" Value="False">
                             <Setter TargetName="AlphaComponent" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>

@@ -31,8 +31,8 @@ namespace ColorTools
         public static readonly DependencyProperty OriginalColorProperty =
             DependencyProperty.Register(nameof(OriginalColor), typeof(Color?), typeof(ColorPicker), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty ShowAlphaProperty =
-            DependencyProperty.Register(nameof(ShowAlpha), typeof(bool), typeof(ColorPicker), new PropertyMetadata(true, OnShowAlphaPropertyChanged));
+        public static readonly DependencyProperty AllowAlphaProperty =
+            DependencyProperty.Register(nameof(AllowAlpha), typeof(bool), typeof(ColorPicker), new PropertyMetadata(true, OnAllowAlphaPropertyChanged));
 
         public static readonly DependencyProperty AlphaBrushProperty =
             DependencyProperty.Register(nameof(AlphaBrush), typeof(Brush), typeof(ColorPicker), new PropertyMetadata(Brushes.Transparent));
@@ -75,10 +75,10 @@ namespace ColorTools
             set => SetValue(OriginalColorProperty, value);
         }
 
-        public bool ShowAlpha
+        public bool AllowAlpha
         {
-            get => (bool)GetValue(ShowAlphaProperty);
-            set => SetValue(ShowAlphaProperty, value);
+            get => (bool)GetValue(AllowAlphaProperty);
+            set => SetValue(AllowAlphaProperty, value);
         }
 
         public Brush AlphaBrush
@@ -123,11 +123,11 @@ namespace ColorTools
             }
         }
 
-        private static void OnShowAlphaPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private static void OnAllowAlphaPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             if (sender is ColorPicker colorPicker)
             {
-                colorPicker.OnShowAlphaChanged();
+                colorPicker.OnAllowAlphaChanged();
             }
         }
 
@@ -196,7 +196,7 @@ namespace ColorTools
             }
         }
 
-        private void OnShowAlphaChanged()
+        private void OnAllowAlphaChanged()
         {
             if (_isUpdating)
             {
@@ -278,13 +278,13 @@ namespace ColorTools
 
             if (color.HasValue)
             {
-                if (!ShowAlpha)
+                if (!AllowAlpha)
                 {
                     color = color.Value.WithoutAlpha();
                 }
 
                 SetCurrentValue(SelectedColorProperty, color.Value);
-                SetCurrentValue(SelectedHexProperty, color.Value.ToHex(ShowAlpha));
+                SetCurrentValue(SelectedHexProperty, color.Value.ToHex(AllowAlpha));
             }
             else
             {
@@ -303,9 +303,9 @@ namespace ColorTools
             }
             _isUpdating = true;
 
-            var selectedColor = color.ToColor(ShowAlpha ? (byte)AlphaComponent.Value : MaxAlpha);
+            var selectedColor = color.ToColor(AllowAlpha ? (byte)AlphaComponent.Value : MaxAlpha);
             SetCurrentValue(SelectedColorProperty, selectedColor);
-            SetCurrentValue(SelectedHexProperty, selectedColor.ToHex(ShowAlpha));
+            SetCurrentValue(SelectedHexProperty, selectedColor.ToHex(AllowAlpha));
 
             _isUpdating = false;
         }
