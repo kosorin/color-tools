@@ -178,18 +178,7 @@ namespace ColorTools
                 return;
             }
 
-            if (SelectedColor is { } selectedColor)
-            {
-                ReplaceSelectedColor(selectedColor);
-
-                var color = new RgbColor(selectedColor);
-                UpdateAlphaComponent(selectedColor.A, color);
-                UpdateColorComponents(color);
-            }
-            else
-            {
-                ReplaceSelectedColor(null);
-            }
+            ReplaceSelectedColor(SelectedColor);
         }
 
         private void OnSelectedHexChanged()
@@ -199,18 +188,7 @@ namespace ColorTools
                 return;
             }
 
-            if (SelectedHex.TryParseHex(out var selectedColor))
-            {
-                ReplaceSelectedColor(selectedColor);
-
-                var color = new RgbColor(selectedColor);
-                UpdateAlphaComponent(selectedColor.A, color);
-                UpdateColorComponents(color);
-            }
-            else
-            {
-                ReplaceSelectedColor(null);
-            }
+            ReplaceSelectedColor(SelectedHex.ParseHex());
         }
 
         private void OnAllowEmptyChanged()
@@ -239,12 +217,13 @@ namespace ColorTools
                 return;
             }
 
-            var color = SelectedColor is { } selectedColor
-                ? new RgbColor(selectedColor)
-                : new RgbColor(RgbRedComponent.Value, RgbGreenComponent.Value, RgbBlueComponent.Value);
+            if (SelectedColor is { } selectedColor)
+            {
+                var color = new RgbColor(selectedColor);
 
-            UpdateSelectedColor(color);
-            UpdateAlphaComponent(AlphaComponent.Value, color);
+                UpdateSelectedColor(color);
+                UpdateAlphaComponent(AlphaComponent.Value, color);
+            }
         }
 
         private void OnAlphaChanged()
@@ -304,90 +283,96 @@ namespace ColorTools
             UpdateColorComponents(color);
         }
 
-        private void ReplaceSelectedColor(Color? color)
+        private void ReplaceSelectedColor(Color? selectedColor)
         {
-            if (_isUpdating)
-            {
-                return;
-            }
             _isUpdating = true;
-
-            if (!color.HasValue && !AllowEmpty)
+            try
             {
-                color = Colors.White;
-            }
-
-            if (color.HasValue)
-            {
-                if (!AllowAlpha)
+                if (!selectedColor.HasValue && !AllowEmpty)
                 {
-                    color = color.Value.WithoutAlpha();
+                    selectedColor = Colors.White;
                 }
 
-                SetCurrentValue(SelectedColorProperty, color.Value);
-                SetCurrentValue(SelectedHexProperty, color.Value.ToHex(AllowAlpha));
-            }
-            else
-            {
-                SetCurrentValue(SelectedColorProperty, null);
-                SetCurrentValue(SelectedHexProperty, string.Empty);
-            }
+                if (selectedColor.HasValue)
+                {
+                    if (!AllowAlpha)
+                    {
+                        selectedColor = selectedColor.Value.WithoutAlpha();
+                    }
 
-            _isUpdating = false;
+                    SetCurrentValue(SelectedColorProperty, selectedColor.Value);
+                    SetCurrentValue(SelectedHexProperty, selectedColor.Value.ToHex(AllowAlpha));
+
+                    var color = new RgbColor(selectedColor.Value);
+
+                    UpdateAlphaComponent(selectedColor.Value.A, color);
+                    UpdateColorComponents(color);
+                }
+                else
+                {
+                    SetCurrentValue(SelectedColorProperty, null);
+                    SetCurrentValue(SelectedHexProperty, string.Empty);
+                }
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
         }
 
         private void UpdateSelectedColor(IColor color)
         {
-            if (_isUpdating)
-            {
-                return;
-            }
             _isUpdating = true;
+            try
+            {
+                var selectedColor = color.ToColor(AllowAlpha ? (byte)AlphaComponent.Value : MaxAlpha);
 
-            var selectedColor = color.ToColor(AllowAlpha ? (byte)AlphaComponent.Value : MaxAlpha);
-            SetCurrentValue(SelectedColorProperty, selectedColor);
-            SetCurrentValue(SelectedHexProperty, selectedColor.ToHex(AllowAlpha));
-
-            _isUpdating = false;
+                SetCurrentValue(SelectedColorProperty, selectedColor);
+                SetCurrentValue(SelectedHexProperty, selectedColor.ToHex(AllowAlpha));
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
         }
 
         private void UpdateAlphaComponent(double alpha, IColor color)
         {
-            if (_isUpdating)
-            {
-                return;
-            }
             _isUpdating = true;
-
-            AlphaComponent.SetValue(alpha, value => color.ToColor((byte)value));
-
-            _isUpdating = false;
+            try
+            {
+                AlphaComponent.SetValue(alpha, value => color.ToColor((byte)value));
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
         }
 
         private void UpdateColorComponents(IColor color)
         {
-            if (_isUpdating)
-            {
-                return;
-            }
             _isUpdating = true;
+            try
+            {
+                var rgb = color.ToRgb();
+                RgbRedComponent.SetValue(rgb.R, value => new RgbColor(value, rgb.G, rgb.B).ToColor());
+                RgbGreenComponent.SetValue(rgb.G, value => new RgbColor(rgb.R, value, rgb.B).ToColor());
+                RgbBlueComponent.SetValue(rgb.B, value => new RgbColor(rgb.R, rgb.G, value).ToColor());
 
-            var rgb = color.ToRgb();
-            RgbRedComponent.SetValue(rgb.R, value => new RgbColor(value, rgb.G, rgb.B).ToColor());
-            RgbGreenComponent.SetValue(rgb.G, value => new RgbColor(rgb.R, value, rgb.B).ToColor());
-            RgbBlueComponent.SetValue(rgb.B, value => new RgbColor(rgb.R, rgb.G, value).ToColor());
+                var hsb = color.ToHsb();
+                HsbHueComponent.SetValue(hsb.H, value => new HsbColor(value, hsb.S, hsb.B).ToColor());
+                HsbSaturationComponent.SetValue(hsb.S, value => new HsbColor(hsb.H, value, hsb.B).ToColor());
+                HsbBrightnessComponent.SetValue(hsb.B, value => new HsbColor(hsb.H, hsb.S, value).ToColor());
 
-            var hsb = color.ToHsb();
-            HsbHueComponent.SetValue(hsb.H, value => new HsbColor(value, hsb.S, hsb.B).ToColor());
-            HsbSaturationComponent.SetValue(hsb.S, value => new HsbColor(hsb.H, value, hsb.B).ToColor());
-            HsbBrightnessComponent.SetValue(hsb.B, value => new HsbColor(hsb.H, hsb.S, value).ToColor());
-
-            var hsl = color.ToHsl();
-            HslHueComponent.SetValue(hsl.H, value => new HslColor(value, hsl.S, hsl.L).ToColor());
-            HslSaturationComponent.SetValue(hsl.S, value => new HslColor(hsl.H, value, hsl.L).ToColor());
-            HslLightnessComponent.SetValue(hsl.L, value => new HslColor(hsl.H, hsl.S, value).ToColor());
-
-            _isUpdating = false;
+                var hsl = color.ToHsl();
+                HslHueComponent.SetValue(hsl.H, value => new HslColor(value, hsl.S, hsl.L).ToColor());
+                HslSaturationComponent.SetValue(hsl.S, value => new HslColor(hsl.H, value, hsl.L).ToColor());
+                HslLightnessComponent.SetValue(hsl.L, value => new HslColor(hsl.H, hsl.S, value).ToColor());
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
         }
     }
 }

@@ -6,6 +6,11 @@ namespace ColorTools
 {
     public static class ColorExtensions
     {
+        public static Color? ParseHex(this string hex)
+        {
+            return TryParseHex(hex, out var color) ? color : null;
+        }
+
         public static bool TryParseHex(this string hex, out Color color)
         {
             if (string.IsNullOrEmpty(hex))
