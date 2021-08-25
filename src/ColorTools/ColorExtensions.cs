@@ -112,11 +112,11 @@ namespace ColorTools
             if (withAlpha)
             {
                 value |= color.A << 24;
-                hex += value.ToString("X8");
+                hex += value.ToString("X8", CultureInfo.InvariantCulture);
             }
             else
             {
-                hex += value.ToString("X6");
+                hex += value.ToString("X6", CultureInfo.InvariantCulture);
             }
 
             return hex;
