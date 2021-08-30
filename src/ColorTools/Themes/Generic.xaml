@@ -67,84 +67,72 @@
                             <TextBlock x:Name="ModelLabel"
                                        Margin="0,0,0,4"
                                        Text="Model" />
-                            <ComboBox MinWidth="{Binding ActualWidth, ElementName=ModelLabel}" Margin="0,0,0,12">
-                                <ComboBoxItem Content="HSL" IsSelected="True" />
-                                <ComboBoxItem Content="HSB" />
-                                <ComboBoxItem Content="RGB" />
-                            </ComboBox>
-                            <StackPanel Tag="{x:Type color:HslColor}">
-                                <color:ColorSlider x:Name="HslHueComponent"
+                            <ComboBox x:Name="ColorModelSelector"
+                                      Margin="0,0,0,12"
+                                      SelectedValue="{Binding ColorModel, RelativeSource={RelativeSource TemplatedParent}}" />
+                            <StackPanel x:Name="HslContainer" Visibility="Collapsed">
+                                <color:ColorSlider x:Name="HslHueSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="7"
                                                    Header="Hue"
                                                    Maximum="360"
                                                    Minimum="0" />
-                                <color:ColorSlider x:Name="HslSaturationComponent"
+                                <color:ColorSlider x:Name="HslSaturationSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="2"
                                                    Header="Saturation"
                                                    Maximum="100"
                                                    Minimum="0" />
-                                <color:ColorSlider x:Name="HslLightnessComponent"
+                                <color:ColorSlider x:Name="HslLightnessSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="3"
                                                    Header="Lightness"
                                                    Maximum="100"
                                                    Minimum="0" />
                             </StackPanel>
-                            <StackPanel Tag="{x:Type color:HsbColor}" Visibility="Collapsed">
-                                <color:ColorSlider x:Name="HsbHueComponent"
+                            <StackPanel x:Name="HsbContainer" Visibility="Collapsed">
+                                <color:ColorSlider x:Name="HsbHueSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="7"
                                                    Header="Hue"
                                                    Maximum="360"
                                                    Minimum="0" />
-                                <color:ColorSlider x:Name="HsbSaturationComponent"
+                                <color:ColorSlider x:Name="HsbSaturationSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="2"
                                                    Header="Saturation"
                                                    Maximum="100"
                                                    Minimum="0" />
-                                <color:ColorSlider x:Name="HsbBrightnessComponent"
+                                <color:ColorSlider x:Name="HsbBrightnessSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="2"
                                                    Header="Brightness"
                                                    Maximum="100"
                                                    Minimum="0" />
                             </StackPanel>
-                            <StackPanel Tag="{x:Type color:RgbColor}" Visibility="Collapsed">
-                                <color:ColorSlider x:Name="RgbRedComponent"
+                            <StackPanel x:Name="RgbContainer" Visibility="Collapsed">
+                                <color:ColorSlider x:Name="RgbRedSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="2"
                                                    Header="Red"
                                                    Maximum="255"
                                                    Minimum="0" />
-                                <color:ColorSlider x:Name="RgbGreenComponent"
+                                <color:ColorSlider x:Name="RgbGreenSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="2"
                                                    Header="Green"
                                                    Maximum="255"
                                                    Minimum="0" />
-                                <color:ColorSlider x:Name="RgbBlueComponent"
+                                <color:ColorSlider x:Name="RgbBlueSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
-                                                   GradientStopCount="2"
                                                    Header="Blue"
                                                    Maximum="255"
                                                    Minimum="0" />
                             </StackPanel>
-                            <color:ColorSlider x:Name="AlphaComponent"
+                            <color:ColorSlider x:Name="AlphaSlider"
                                                Margin="0,0,0,8"
                                                AlphaBrush="{TemplateBinding AlphaBrush}"
-                                               GradientStopCount="2"
                                                Header="Opacity"
                                                Maximum="255"
                                                Minimum="0" />
@@ -183,7 +171,16 @@
                             <Setter TargetName="SelectedColorPreviewBorder" Property="Background" Value="{StaticResource EmptyBrush}" />
                         </Trigger>
                         <Trigger Property="AllowAlpha" Value="False">
-                            <Setter TargetName="AlphaComponent" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AlphaSlider" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ColorModel" Value="{x:Static color:ColorModel.Hsl}">
+                            <Setter TargetName="HslContainer" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="ColorModel" Value="{x:Static color:ColorModel.Hsb}">
+                            <Setter TargetName="HsbContainer" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="ColorModel" Value="{x:Static color:ColorModel.Rgb}">
+                            <Setter TargetName="RgbContainer" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -233,9 +230,6 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 UseLayoutRounding="True">
                             <Canvas x:Name="SliderCanvas">
-                                <Canvas.Background>
-                                    <LinearGradientBrush x:Name="SliderCanvasGradient" />
-                                </Canvas.Background>
                                 <Border x:Name="Handle"
                                         Width="10"
                                         Height="{Binding ActualHeight, ElementName=SliderCanvas}"

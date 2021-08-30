@@ -12,7 +12,7 @@ namespace ColorTools
     [TemplatePart(Name = nameof(HandleTranslateTransform), Type = typeof(TranslateTransform))]
     public class ColorSlider : Control
     {
-        private const int MinimumGradientStopCount = 2;
+        private static readonly Color DefaultGradientColor = Colors.Transparent;
 
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(double), typeof(ColorSlider),
@@ -23,9 +23,6 @@ namespace ColorTools
 
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(ColorSlider), new PropertyMetadata(100d, OnMaximumPropertyChanged));
-
-        public static readonly DependencyProperty GradientStopCountProperty =
-            DependencyProperty.Register(nameof(GradientStopCount), typeof(int), typeof(ColorSlider), new PropertyMetadata(MinimumGradientStopCount, OnGradientStopCountPropertyChanged, CoerceGradientStopCountProperty));
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register(nameof(Header), typeof(object), typeof(ColorSlider), new PropertyMetadata(null));
@@ -43,10 +40,16 @@ namespace ColorTools
 
         private bool _isValueUpdating;
         private bool _isDragging;
+        private GradientContext? _gradientContext;
 
         static ColorSlider()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ColorSlider), new FrameworkPropertyMetadata(typeof(ColorSlider)));
+        }
+
+        public ColorSlider()
+        {
+            IsVisibleChanged += OnIsVisibleChanged;
         }
 
         public double Value
@@ -65,12 +68,6 @@ namespace ColorTools
         {
             get => (double)GetValue(MaximumProperty);
             set => SetValue(MaximumProperty, value);
-        }
-
-        public int GradientStopCount
-        {
-            get => (int)GetValue(GradientStopCountProperty);
-            set => SetValue(GradientStopCountProperty, value);
         }
 
         public object? Header
@@ -103,6 +100,8 @@ namespace ColorTools
                     _sliderCanvas.MouseMove -= SliderCanvas_MouseMove;
                     _sliderCanvas.MouseWheel -= SliderCanvas_MouseWheel;
                     _sliderCanvas.SizeChanged -= SliderCanvas_SizeChanged;
+
+                    _sliderCanvas.Background = null;
                 }
 
                 _sliderCanvas = value;
@@ -115,7 +114,7 @@ namespace ColorTools
                     _sliderCanvas.MouseWheel += SliderCanvas_MouseWheel;
                     _sliderCanvas.SizeChanged += SliderCanvas_SizeChanged;
 
-                    UpdateGradientBrush();
+                    _sliderCanvas.Background = _gradientContext?.Update(Minimum, Maximum);
                 }
             }
         }
@@ -124,21 +123,23 @@ namespace ColorTools
 
         private TranslateTransform? HandleTranslateTransform { get; set; }
 
-        public void UpdateGradient(Func<double, Color> colorFactory)
+        public void Update(double value)
         {
-            if (SliderCanvas is not { Background: LinearGradientBrush { GradientStops: { Count: >= MinimumGradientStopCount, } gradientStops, }, })
-            {
-                return;
-            }
+            Value = value;
 
-            var stopCount = gradientStops.Count;
-            var min = Minimum;
-            var delta = Maximum - min;
+            UpdateGradient();
+        }
 
-            for (var i = 0; i < stopCount; i++)
+        public void InitializeGradient(IColorState colorState, int stopCount, ColorFactory<double> stopColorFactory)
+        {
+            _gradientContext = new GradientContext(colorState, stopCount, stopColorFactory);
+        }
+
+        private void UpdateGradient()
+        {
+            if (IsVisible)
             {
-                var value = i / (double)(stopCount - 1) * delta + min;
-                gradientStops[i].Color = colorFactory.Invoke(value);
+                _gradientContext?.Update(Minimum, Maximum);
             }
         }
 
@@ -146,11 +147,14 @@ namespace ColorTools
         {
             base.OnApplyTemplate();
 
-            _isDragging = false;
-
             SliderCanvas = GetTemplateChild(nameof(SliderCanvas)) as Canvas;
             Handle = GetTemplateChild(nameof(Handle)) as Border;
             HandleTranslateTransform = GetTemplateChild(nameof(HandleTranslateTransform)) as TranslateTransform;
+        }
+
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
+        {
+            UpdateGradient();
         }
 
         protected override void OnKeyDown(KeyEventArgs args)
@@ -190,19 +194,6 @@ namespace ColorTools
             {
                 slider.OnMaximumChanged();
             }
-        }
-
-        private static void OnGradientStopCountPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            if (sender is ColorSlider slider)
-            {
-                slider.OnGradientStopCountChanged();
-            }
-        }
-
-        private static object CoerceGradientStopCountProperty(DependencyObject sender, object baseValue)
-        {
-            return baseValue is int value and >= MinimumGradientStopCount ? value : MinimumGradientStopCount;
         }
 
         private void OnValueChanged(double oldValue)
@@ -248,11 +239,6 @@ namespace ColorTools
             CoerceValue();
         }
 
-        private void OnGradientStopCountChanged()
-        {
-            UpdateGradientBrush();
-        }
-
         private void CoerceValue()
         {
             var value = Value;
@@ -282,24 +268,6 @@ namespace ColorTools
             {
                 SetCurrentValue(MaximumProperty, minimum);
             }
-        }
-
-        private void UpdateGradientBrush()
-        {
-            if (SliderCanvas == null)
-            {
-                return;
-            }
-
-            var stopCount = GradientStopCount;
-            if (stopCount < MinimumGradientStopCount)
-            {
-                SliderCanvas.Background = Brushes.Transparent;
-                return;
-            }
-
-            var gradientStops = Enumerable.Range(0, stopCount).Select(x => new GradientStop(Colors.Transparent, x / (double)(stopCount - 1)));
-            SliderCanvas.Background = new LinearGradientBrush(new GradientStopCollection(gradientStops), new Point(0, 0), new Point(1, 0));
         }
 
         private void SliderCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs args)
@@ -460,6 +428,44 @@ namespace ColorTools
         {
             add => AddHandler(ValueChangedEvent, value);
             remove => RemoveHandler(ValueChangedEvent, value);
+        }
+
+        private class GradientContext
+        {
+            private readonly IColorState _colorState;
+            private readonly ColorFactory<double> _stopColorFactory;
+
+            public GradientContext(IColorState colorState, int stopCount, ColorFactory<double> stopColorFactory)
+            {
+                _colorState = colorState;
+                _stopColorFactory = stopColorFactory;
+
+                Brush = CreateBrush(stopCount);
+            }
+
+            public LinearGradientBrush Brush { get; }
+
+            public LinearGradientBrush Update(double minimum, double maximum)
+            {
+                var stops = Brush.GradientStops;
+                var stopCount = stops.Count;
+
+                var delta = maximum - minimum;
+
+                for (var i = 0; i < stopCount; i++)
+                {
+                    var value = i / (double)(stopCount - 1) * delta + minimum;
+                    stops[i].Color = _stopColorFactory.Invoke(value, _colorState);
+                }
+
+                return Brush;
+            }
+
+            private LinearGradientBrush CreateBrush(int stopCount)
+            {
+                var stops = Enumerable.Range(0, stopCount).Select(x => new GradientStop(DefaultGradientColor, x / (double)(stopCount - 1)));
+                return new LinearGradientBrush(new GradientStopCollection(stops), new Point(0, 0), new Point(1, 0));
+            }
         }
     }
 }
