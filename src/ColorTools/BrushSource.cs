@@ -2,21 +2,21 @@ using System.Windows.Media;
 
 namespace ColorTools
 {
-    public abstract class ComponentBrushSource
+    public abstract class BrushSource
     {
         protected static readonly Color DefaultColor = Colors.Transparent;
 
-        protected ComponentBrushSource(IColorState colorState)
+        protected BrushSource(IColorState colorState)
         {
             ColorState = colorState;
         }
 
-        private ComponentBrushSource()
+        private BrushSource()
         {
             ColorState = null!;
         }
 
-        public static ComponentBrushSource Empty { get; } = new EmptyBrushSource();
+        public static BrushSource Empty { get; } = new EmptyBrushSource();
 
         public abstract Brush Brush { get; }
 
@@ -24,7 +24,7 @@ namespace ColorTools
 
         public abstract void Update();
 
-        private class EmptyBrushSource : ComponentBrushSource
+        private class EmptyBrushSource : BrushSource
         {
             public EmptyBrushSource()
             {

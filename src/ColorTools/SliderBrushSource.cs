@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace ColorTools
 {
-    public class SliderBrushSource : ComponentBrushSource
+    public class SliderBrushSource : BrushSource
     {
         private readonly LinearGradientBrush _brush;
         private readonly ColorFactory<double> _stopColorFactory;

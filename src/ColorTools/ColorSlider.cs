@@ -37,7 +37,7 @@ namespace ColorTools
 
         private bool _isValueUpdating;
         private bool _isDragging;
-        private ComponentBrushSource? _brushSource = ComponentBrushSource.Empty;
+        private BrushSource? _brushSource = BrushSource.Empty;
 
         static ColorSlider()
         {
@@ -128,7 +128,7 @@ namespace ColorTools
             UpdateBrushSource();
         }
 
-        public void InitializeBrushSource(ComponentBrushSource brushSource)
+        public void InitializeBrushSource(BrushSource brushSource)
         {
             _brushSource = brushSource;
         }
