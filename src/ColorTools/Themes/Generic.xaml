@@ -8,20 +8,20 @@
 
     <DrawingBrush x:Key="AlphaBrush"
                   TileMode="Tile"
-                  Viewport="0,0,10,10"
+                  Viewport="0,0 10,10"
                   ViewportUnits="Absolute">
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <GeometryDrawing Brush="White">
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="0,0 100,100" />
+                        <RectangleGeometry Rect="0,0 2,2" />
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
                 <GeometryDrawing Brush="LightGray">
                     <GeometryDrawing.Geometry>
                         <GeometryGroup>
-                            <RectangleGeometry Rect="0,0 50,50" />
-                            <RectangleGeometry Rect="50,50 50,50" />
+                            <RectangleGeometry Rect="0,0 1,1" />
+                            <RectangleGeometry Rect="1,1 1,1" />
                         </GeometryGroup>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
