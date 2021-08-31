@@ -238,7 +238,7 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 UseLayoutRounding="True">
-                            <Canvas x:Name="ComponentCanvas">
+                            <Canvas x:Name="ComponentCanvas" Cursor="SizeWE">
                                 <Border x:Name="Handle"
                                         Width="10"
                                         Height="{Binding ActualHeight, ElementName=ComponentCanvas}"
@@ -278,7 +278,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             ClipToBounds="False"
                             UseLayoutRounding="True">
-                        <Canvas x:Name="ComponentCanvas">
+                        <Canvas x:Name="ComponentCanvas" Cursor="Cross">
                             <Canvas x:Name="Handle"
                                     Width="13"
                                     Height="13"
