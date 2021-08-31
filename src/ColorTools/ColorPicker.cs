@@ -48,6 +48,9 @@ namespace ColorTools
         public static readonly DependencyProperty AlphaBrushProperty =
             DependencyProperty.Register(nameof(AlphaBrush), typeof(Brush), typeof(ColorPicker), new PropertyMetadata(Brushes.Transparent));
 
+        public static readonly DependencyProperty EmptyBrushProperty =
+            DependencyProperty.Register(nameof(EmptyBrush), typeof(Brush), typeof(ColorPicker), new PropertyMetadata(Brushes.White));
+
         private ColorSlider? _alphaSlider;
         private ColorSlider? _rgbRedSlider;
         private ColorSlider? _rgbGreenSlider;
@@ -114,6 +117,12 @@ namespace ColorTools
         {
             get => (Brush)GetValue(AlphaBrushProperty);
             set => SetValue(AlphaBrushProperty, value);
+        }
+
+        public Brush EmptyBrush
+        {
+            get => (Brush)GetValue(EmptyBrushProperty);
+            set => SetValue(EmptyBrushProperty, value);
         }
 
         private ColorSlider? AlphaSlider

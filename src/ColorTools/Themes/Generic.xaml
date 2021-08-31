@@ -31,24 +31,31 @@
 
     <DrawingBrush x:Key="EmptyBrush">
         <DrawingBrush.Drawing>
-            <GeometryDrawing>
-                <GeometryDrawing.Pen>
-                    <Pen Brush="Red"
-                         EndLineCap="Triangle"
-                         StartLineCap="Triangle"
-                         Thickness="2" />
-                </GeometryDrawing.Pen>
-                <GeometryDrawing.Geometry>
-                    <PathGeometry>
-                        <PathFigure StartPoint="0,100">
-                            <LineSegment IsSmoothJoin="True" Point="100,0" />
-                        </PathFigure>
-                        <PathFigure StartPoint="0,0">
-                            <LineSegment IsSmoothJoin="True" Point="100,100" />
-                        </PathFigure>
-                    </PathGeometry>
-                </GeometryDrawing.Geometry>
-            </GeometryDrawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="White" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,0 10,10" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="Red"
+                             EndLineCap="Round"
+                             StartLineCap="Round"
+                             Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure StartPoint="1,9">
+                                <LineSegment IsSmoothJoin="True" Point="9,1" />
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
@@ -149,7 +156,7 @@
                         <StackPanel Grid.Row="1"
                                     Grid.Column="1"
                                     Margin="12,0,0,0">
-                            <StackPanel Width="96">
+                            <StackPanel Width="80">
                                 <TextBlock Margin="0,0,0,4" Text="Color" />
                                 <Border Margin="0,0,0,12"
                                         Background="{TemplateBinding AlphaBrush}"
@@ -157,12 +164,12 @@
                                         BorderThickness="1"
                                         UseLayoutRounding="True">
                                     <StackPanel>
-                                        <Border x:Name="OriginalColorPreviewBorder" Height="48">
+                                        <Border x:Name="OriginalColorPreviewBorder" Height="80">
                                             <Border.Background>
                                                 <SolidColorBrush Color="{Binding OriginalColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NullableColorToColorConverter}}" />
                                             </Border.Background>
                                         </Border>
-                                        <Border x:Name="SelectedColorPreviewBorder" Height="48">
+                                        <Border x:Name="SelectedColorPreviewBorder" Height="80">
                                             <Border.Background>
                                                 <SolidColorBrush Color="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NullableColorToColorConverter}}" />
                                             </Border.Background>
@@ -179,7 +186,7 @@
                             <Setter TargetName="OriginalColorPreviewBorder" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="SelectedColor" Value="{x:Null}">
-                            <Setter TargetName="SelectedColorPreviewBorder" Property="Background" Value="{StaticResource EmptyBrush}" />
+                            <Setter TargetName="SelectedColorPreviewBorder" Property="Background" Value="{Binding EmptyBrush, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
                         <Trigger Property="AllowAlpha" Value="False">
                             <Setter TargetName="AlphaSlider" Property="Visibility" Value="Collapsed" />
