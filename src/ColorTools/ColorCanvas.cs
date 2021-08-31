@@ -174,39 +174,6 @@ namespace ColorTools
             }
         }
 
-        private void CoerceValue()
-        {
-            var (x, y) = (Value.X, Value.Y);
-            var coerced = false;
-
-            if (x < 0)
-            {
-                x = 0;
-                coerced = true;
-            }
-            else if (x > 1)
-            {
-                x = 1;
-                coerced = true;
-            }
-
-            if (y < 0)
-            {
-                y = 0;
-                coerced = true;
-            }
-            else if (y > 1)
-            {
-                y = 1;
-                coerced = true;
-            }
-
-            if (coerced)
-            {
-                SetCurrentValue(ValueProperty, new Point(x, y));
-            }
-        }
-
         private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
         {
             if (ComponentCanvas == null)
@@ -253,6 +220,39 @@ namespace ColorTools
         private void OnComponentCanvasSizeChanged(object sender, SizeChangedEventArgs args)
         {
             UpdateHandleCurrentPosition();
+        }
+
+        private void CoerceValue()
+        {
+            var (x, y) = (Value.X, Value.Y);
+            var coerced = false;
+
+            if (x < 0)
+            {
+                x = 0;
+                coerced = true;
+            }
+            else if (x > 1)
+            {
+                x = 1;
+                coerced = true;
+            }
+
+            if (y < 0)
+            {
+                y = 0;
+                coerced = true;
+            }
+            else if (y > 1)
+            {
+                y = 1;
+                coerced = true;
+            }
+
+            if (coerced)
+            {
+                SetCurrentValue(ValueProperty, new Point(x, y));
+            }
         }
 
         private void UpdateBrushSource()

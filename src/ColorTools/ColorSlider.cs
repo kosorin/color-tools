@@ -239,37 +239,6 @@ namespace ColorTools
             CoerceValue();
         }
 
-        private void CoerceValue()
-        {
-            var value = Value;
-            if (value < Minimum)
-            {
-                SetCurrentValue(ValueProperty, Minimum);
-            }
-            else if (value > Maximum)
-            {
-                SetCurrentValue(ValueProperty, Maximum);
-            }
-        }
-
-        private void CoerceMinimum()
-        {
-            var maximum = Maximum;
-            if (Minimum > maximum)
-            {
-                SetCurrentValue(MinimumProperty, maximum);
-            }
-        }
-
-        private void CoerceMaximum()
-        {
-            var minimum = Minimum;
-            if (Maximum < minimum)
-            {
-                SetCurrentValue(MaximumProperty, minimum);
-            }
-        }
-
         private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
         {
             if (ComponentCanvas == null)
@@ -326,6 +295,37 @@ namespace ColorTools
         private void OnComponentCanvasSizeChanged(object sender, SizeChangedEventArgs args)
         {
             UpdateHandleCurrentPosition();
+        }
+
+        private void CoerceValue()
+        {
+            var value = Value;
+            if (value < Minimum)
+            {
+                SetCurrentValue(ValueProperty, Minimum);
+            }
+            else if (value > Maximum)
+            {
+                SetCurrentValue(ValueProperty, Maximum);
+            }
+        }
+
+        private void CoerceMinimum()
+        {
+            var maximum = Maximum;
+            if (Minimum > maximum)
+            {
+                SetCurrentValue(MinimumProperty, maximum);
+            }
+        }
+
+        private void CoerceMaximum()
+        {
+            var minimum = Minimum;
+            if (Maximum < minimum)
+            {
+                SetCurrentValue(MaximumProperty, minimum);
+            }
         }
 
         private void UpdateBrushSource()
