@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -7,13 +6,11 @@ using System.Windows.Media;
 
 namespace ColorTools
 {
-    [TemplatePart(Name = nameof(SliderCanvas), Type = typeof(Canvas))]
+    [TemplatePart(Name = nameof(ComponentCanvas), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(Handle), Type = typeof(Border))]
     [TemplatePart(Name = nameof(HandleTranslateTransform), Type = typeof(TranslateTransform))]
     public class ColorSlider : Control
     {
-        private static readonly Color DefaultGradientColor = Colors.Transparent;
-
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(double), typeof(ColorSlider),
                 new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged));
@@ -36,11 +33,11 @@ namespace ColorTools
         public static readonly RoutedEvent ValueChangedEvent =
             EventManager.RegisterRoutedEvent(nameof(ValueChanged), RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<double>), typeof(ColorSlider));
 
-        private Canvas? _sliderCanvas;
+        private Canvas? _componentCanvas;
 
         private bool _isValueUpdating;
         private bool _isDragging;
-        private GradientContext? _gradientContext;
+        private ComponentBrushSource? _brushSource = ComponentBrushSource.Empty;
 
         static ColorSlider()
         {
@@ -49,6 +46,7 @@ namespace ColorTools
 
         public ColorSlider()
         {
+            Loaded += OnLoaded;
             IsVisibleChanged += OnIsVisibleChanged;
         }
 
@@ -88,33 +86,33 @@ namespace ColorTools
             set => SetValue(AlphaBrushProperty, value);
         }
 
-        private Canvas? SliderCanvas
+        private Canvas? ComponentCanvas
         {
-            get => _sliderCanvas;
+            get => _componentCanvas;
             set
             {
-                if (_sliderCanvas != null)
+                if (_componentCanvas != null)
                 {
-                    _sliderCanvas.MouseLeftButtonDown -= SliderCanvas_MouseLeftButtonDown;
-                    _sliderCanvas.MouseLeftButtonUp -= SliderCanvas_MouseLeftButtonUp;
-                    _sliderCanvas.MouseMove -= SliderCanvas_MouseMove;
-                    _sliderCanvas.MouseWheel -= SliderCanvas_MouseWheel;
-                    _sliderCanvas.SizeChanged -= SliderCanvas_SizeChanged;
+                    _componentCanvas.MouseLeftButtonDown -= OnComponentCanvasMouseLeftButtonDown;
+                    _componentCanvas.MouseLeftButtonUp -= OnComponentCanvasMouseLeftButtonUp;
+                    _componentCanvas.MouseMove -= OnComponentCanvasMouseMove;
+                    _componentCanvas.MouseWheel -= OnComponentCanvasMouseWheel;
+                    _componentCanvas.SizeChanged -= OnComponentCanvasSizeChanged;
 
-                    _sliderCanvas.Background = null;
+                    _componentCanvas.Background = null;
                 }
 
-                _sliderCanvas = value;
+                _componentCanvas = value;
 
-                if (_sliderCanvas != null)
+                if (_componentCanvas != null)
                 {
-                    _sliderCanvas.MouseLeftButtonDown += SliderCanvas_MouseLeftButtonDown;
-                    _sliderCanvas.MouseLeftButtonUp += SliderCanvas_MouseLeftButtonUp;
-                    _sliderCanvas.MouseMove += SliderCanvas_MouseMove;
-                    _sliderCanvas.MouseWheel += SliderCanvas_MouseWheel;
-                    _sliderCanvas.SizeChanged += SliderCanvas_SizeChanged;
+                    _componentCanvas.MouseLeftButtonDown += OnComponentCanvasMouseLeftButtonDown;
+                    _componentCanvas.MouseLeftButtonUp += OnComponentCanvasMouseLeftButtonUp;
+                    _componentCanvas.MouseMove += OnComponentCanvasMouseMove;
+                    _componentCanvas.MouseWheel += OnComponentCanvasMouseWheel;
+                    _componentCanvas.SizeChanged += OnComponentCanvasSizeChanged;
 
-                    _sliderCanvas.Background = _gradientContext?.Update(Minimum, Maximum);
+                    _componentCanvas.Background = _brushSource?.Brush;
                 }
             }
         }
@@ -125,36 +123,38 @@ namespace ColorTools
 
         public void Update(double value)
         {
-            Value = value;
+            SetCurrentValue(ValueProperty, value);
 
-            UpdateGradient();
+            UpdateBrushSource();
         }
 
-        public void InitializeGradient(IColorState colorState, int stopCount, ColorFactory<double> stopColorFactory)
+        public void InitializeBrushSource(ComponentBrushSource brushSource)
         {
-            _gradientContext = new GradientContext(colorState, stopCount, stopColorFactory);
-        }
-
-        private void UpdateGradient()
-        {
-            if (IsVisible)
-            {
-                _gradientContext?.Update(Minimum, Maximum);
-            }
+            _brushSource = brushSource;
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            SliderCanvas = GetTemplateChild(nameof(SliderCanvas)) as Canvas;
+            ComponentCanvas = GetTemplateChild(nameof(ComponentCanvas)) as Canvas;
             Handle = GetTemplateChild(nameof(Handle)) as Border;
             HandleTranslateTransform = GetTemplateChild(nameof(HandleTranslateTransform)) as TranslateTransform;
+
+            UpdateHandleCurrentPosition();
+            UpdateBrushSource();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs args)
+        {
+            UpdateHandleCurrentPosition();
+            UpdateBrushSource();
         }
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
         {
-            UpdateGradient();
+            UpdateHandleCurrentPosition();
+            UpdateBrushSource();
         }
 
         protected override void OnKeyDown(KeyEventArgs args)
@@ -270,56 +270,51 @@ namespace ColorTools
             }
         }
 
-        private void SliderCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs args)
+        private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
         {
-            if (SliderCanvas == null)
+            if (ComponentCanvas == null)
             {
                 return;
             }
 
-            UpdateHandleNewPosition(args.GetPosition(SliderCanvas).X);
+            UpdateHandleNewPosition(args.GetPosition(ComponentCanvas).X);
 
             _isDragging = true;
-            SliderCanvas.CaptureMouse();
+            ComponentCanvas.CaptureMouse();
             args.Handled = true;
         }
 
-        private void SliderCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs args)
+        private void OnComponentCanvasMouseLeftButtonUp(object sender, MouseButtonEventArgs args)
         {
-            if (SliderCanvas == null)
+            if (ComponentCanvas == null)
             {
                 return;
             }
 
             _isDragging = false;
-            SliderCanvas.ReleaseMouseCapture();
+            ComponentCanvas.ReleaseMouseCapture();
             args.Handled = true;
         }
 
-        private void SliderCanvas_MouseMove(object sender, MouseEventArgs args)
+        private void OnComponentCanvasMouseMove(object sender, MouseEventArgs args)
         {
-            if (SliderCanvas == null)
-            {
-                return;
-            }
-
             if (!_isDragging || args.LeftButton != MouseButtonState.Pressed)
             {
                 return;
             }
 
-            UpdateHandleNewPosition(args.GetPosition(SliderCanvas).X);
-
-            args.Handled = true;
-        }
-
-        private void SliderCanvas_MouseWheel(object sender, MouseWheelEventArgs args)
-        {
-            if (SliderCanvas == null)
+            if (ComponentCanvas == null)
             {
                 return;
             }
 
+            UpdateHandleNewPosition(args.GetPosition(ComponentCanvas).X);
+
+            args.Handled = true;
+        }
+
+        private void OnComponentCanvasMouseWheel(object sender, MouseWheelEventArgs args)
+        {
             if (_isDragging)
             {
                 return;
@@ -328,14 +323,19 @@ namespace ColorTools
             MoveHandle(Math.Sign(args.Delta));
         }
 
-        private void SliderCanvas_SizeChanged(object sender, SizeChangedEventArgs args)
+        private void OnComponentCanvasSizeChanged(object sender, SizeChangedEventArgs args)
         {
-            if (SliderCanvas == null)
+            UpdateHandleCurrentPosition();
+        }
+
+        private void UpdateBrushSource()
+        {
+            if (!IsVisible || ComponentCanvas == null)
             {
                 return;
             }
 
-            UpdateHandleCurrentPosition();
+            _brushSource?.Update();
         }
 
         private void MoveHandle(int sign)
@@ -356,42 +356,47 @@ namespace ColorTools
                 return;
             }
 
+            if (!IsVisible || ComponentCanvas == null || Handle == null || HandleTranslateTransform == null)
+            {
+                return;
+            }
+
             var (offset, width) = GetLayoutInfo();
             if (width <= 0)
             {
                 return;
             }
 
-            if (HandleTranslateTransform != null)
-            {
-                HandleTranslateTransform.X = ValueToHandlePosition(Value, offset, width, Minimum, Maximum);
-            }
+            HandleTranslateTransform.X = ValueToHandlePosition(Value, offset, width, Minimum, Maximum);
         }
 
         private void UpdateHandleNewPosition(double mousePosition)
         {
+            if (!IsVisible || ComponentCanvas == null || Handle == null || HandleTranslateTransform == null)
+            {
+                return;
+            }
+
             var (offset, width) = GetLayoutInfo();
             if (width <= 0)
             {
                 return;
             }
 
-            if (HandleTranslateTransform != null)
-            {
-                HandleTranslateTransform.X = MousePositionToHandlePosition(mousePosition, offset, width);
-            }
+            HandleTranslateTransform.X = MousePositionToHandlePosition(mousePosition, offset, width);
+
             SetCurrentValue(ValueProperty, MousePositionToValue(mousePosition, offset, width, Minimum, Maximum));
         }
 
         private (double offset, double width) GetLayoutInfo()
         {
-            if (SliderCanvas == null || Handle == null)
+            if (ComponentCanvas == null || Handle == null)
             {
                 return default;
             }
 
             var offset = Handle.Width / 2;
-            var width = SliderCanvas.ActualWidth - Handle.Width;
+            var width = ComponentCanvas.ActualWidth - Handle.Width;
             return (offset, width);
         }
 
@@ -428,44 +433,6 @@ namespace ColorTools
         {
             add => AddHandler(ValueChangedEvent, value);
             remove => RemoveHandler(ValueChangedEvent, value);
-        }
-
-        private class GradientContext
-        {
-            private readonly IColorState _colorState;
-            private readonly ColorFactory<double> _stopColorFactory;
-
-            public GradientContext(IColorState colorState, int stopCount, ColorFactory<double> stopColorFactory)
-            {
-                _colorState = colorState;
-                _stopColorFactory = stopColorFactory;
-
-                Brush = CreateBrush(stopCount);
-            }
-
-            public LinearGradientBrush Brush { get; }
-
-            public LinearGradientBrush Update(double minimum, double maximum)
-            {
-                var stops = Brush.GradientStops;
-                var stopCount = stops.Count;
-
-                var delta = maximum - minimum;
-
-                for (var i = 0; i < stopCount; i++)
-                {
-                    var value = i / (double)(stopCount - 1) * delta + minimum;
-                    stops[i].Color = _stopColorFactory.Invoke(value, _colorState);
-                }
-
-                return Brush;
-            }
-
-            private LinearGradientBrush CreateBrush(int stopCount)
-            {
-                var stops = Enumerable.Range(0, stopCount).Select(x => new GradientStop(DefaultGradientColor, x / (double)(stopCount - 1)));
-                return new LinearGradientBrush(new GradientStopCollection(stops), new Point(0, 0), new Point(1, 0));
-            }
         }
     }
 }
