@@ -16,6 +16,7 @@ namespace ColorTools
     [TemplatePart(Name = nameof(HslHueSlider), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HslSaturationSlider), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HslLightnessSlider), Type = typeof(ColorSlider))]
+    [TemplatePart(Name = nameof(HsbSaturationBrightnessCanvas), Type = typeof(ColorCanvas))]
     [TemplatePart(Name = nameof(ColorModelSelector), Type = typeof(Selector))]
     public class ColorPicker : Control
     {
@@ -57,6 +58,7 @@ namespace ColorTools
         private ColorSlider? _hslHueSlider;
         private ColorSlider? _hslSaturationSlider;
         private ColorSlider? _hslLightnessSlider;
+        private ColorCanvas? _hsbSaturationBrightnessCanvas;
         private Selector? _colorModelSelector;
 
         private bool _isUpdating;
@@ -324,6 +326,27 @@ namespace ColorTools
             }
         }
 
+        private ColorCanvas? HsbSaturationBrightnessCanvas
+        {
+            get => _hsbSaturationBrightnessCanvas;
+            set
+            {
+                if (_hsbSaturationBrightnessCanvas != null)
+                {
+                    _hsbSaturationBrightnessCanvas.ValueChanged -= OnHsbSaturationBrightnessChanged;
+                }
+
+                _hsbSaturationBrightnessCanvas = value;
+
+                if (_hsbSaturationBrightnessCanvas != null)
+                {
+                    _hsbSaturationBrightnessCanvas.InitializeBrushSource(new HsbCanvasBrushSource(_colorState));
+                    _hsbSaturationBrightnessCanvas.Update(new Point(_colorState.Hsb.S * 0.01, _colorState.Hsb.B * 0.01));
+                    _hsbSaturationBrightnessCanvas.ValueChanged += OnHsbSaturationBrightnessChanged;
+                }
+            }
+        }
+
         private Selector? ColorModelSelector
         {
             get => _colorModelSelector;
@@ -353,6 +376,8 @@ namespace ColorTools
             HslHueSlider = GetTemplateChild(nameof(HslHueSlider)) as ColorSlider;
             HslSaturationSlider = GetTemplateChild(nameof(HslSaturationSlider)) as ColorSlider;
             HslLightnessSlider = GetTemplateChild(nameof(HslLightnessSlider)) as ColorSlider;
+
+            HsbSaturationBrightnessCanvas = GetTemplateChild(nameof(HsbSaturationBrightnessCanvas)) as ColorCanvas;
 
             ColorModelSelector = GetTemplateChild(nameof(ColorModelSelector)) as Selector;
         }
@@ -586,6 +611,19 @@ namespace ColorTools
             UpdateComponents();
         }
 
+        private void OnHsbSaturationBrightnessChanged(object sender, RoutedPropertyChangedEventArgs<Point> args)
+        {
+            if (_isUpdating)
+            {
+                return;
+            }
+
+            _colorState.Update(new HsbColor(_colorState.Hsb.H, args.NewValue.X * 100, args.NewValue.Y * 100));
+
+            UpdateSelectedColor();
+            UpdateComponents();
+        }
+
         private void ReplaceSelectedColor(Color? selectedColor)
         {
             _isUpdating = true;
@@ -658,6 +696,8 @@ namespace ColorTools
                 HslHueSlider?.Update(_colorState.Hsl.H);
                 HslSaturationSlider?.Update(_colorState.Hsl.S);
                 HslLightnessSlider?.Update(_colorState.Hsl.L);
+
+                HsbSaturationBrightnessCanvas?.Update(new Point(_colorState.Hsb.S * 0.01, _colorState.Hsb.B * 0.01));
             }
             finally
             {

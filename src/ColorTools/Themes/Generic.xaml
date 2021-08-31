@@ -59,11 +59,20 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type color:ColorPicker}">
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="250" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
+                        <color:ColorCanvas x:Name="HsbSaturationBrightnessCanvas"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           Grid.ColumnSpan="2"
+                                           Margin="0,0,0,12" />
+                        <StackPanel Grid.Row="1" Grid.Column="0">
                             <TextBlock x:Name="ModelLabel"
                                        Margin="0,0,0,4"
                                        Text="Model" />
@@ -137,7 +146,9 @@
                                                Maximum="255"
                                                Minimum="0" />
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                        <StackPanel Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0">
                             <StackPanel Width="96">
                                 <TextBlock Margin="0,0,0,4" Text="Color" />
                                 <Border Margin="0,0,0,12"
@@ -214,16 +225,14 @@
                                           VerticalAlignment="Center"
                                           Content="{TemplateBinding Header}"
                                           ContentTemplate="{TemplateBinding HeaderTemplate}" />
-                        <TextBox x:Name="ValueBox"
-                                 Grid.Row="2"
+                        <TextBox Grid.Row="2"
                                  Grid.Column="2"
                                  VerticalAlignment="Stretch"
                                  HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
                                  behaviors:ColorTextBoxBehavior.Enable="True"
                                  Text="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource TemplatedParent}}" />
-                        <Border x:Name="Slider"
-                                Grid.Row="2"
+                        <Border Grid.Row="2"
                                 Grid.Column="0"
                                 Background="{TemplateBinding AlphaBrush}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -251,6 +260,47 @@
                             </Canvas>
                         </Border>
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type color:ColorCanvas}">
+        <Setter Property="AlphaBrush" Value="{StaticResource AlphaBrush}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="BorderBrush" Value="Gray" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type color:ColorCanvas}">
+                    <Border Background="{TemplateBinding AlphaBrush}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ClipToBounds="False"
+                            UseLayoutRounding="True">
+                        <Canvas x:Name="ComponentCanvas">
+                            <Canvas x:Name="Handle"
+                                    Width="13"
+                                    Height="13"
+                                    IsHitTestVisible="False">
+                                <Canvas.RenderTransform>
+                                    <TranslateTransform x:Name="HandleTranslateTransform" />
+                                </Canvas.RenderTransform>
+                                <Ellipse Width="13"
+                                         Height="13"
+                                         IsHitTestVisible="False"
+                                         Stroke="Black"
+                                         StrokeThickness="1" />
+                                <Ellipse Canvas.Left="1"
+                                         Canvas.Top="1"
+                                         Width="11"
+                                         Height="11"
+                                         IsHitTestVisible="False"
+                                         Stroke="White"
+                                         StrokeThickness="1" />
+                            </Canvas>
+                        </Canvas>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
