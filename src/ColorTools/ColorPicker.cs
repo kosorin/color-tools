@@ -68,10 +68,13 @@ namespace ColorTools
         private double _alpha = DefaultColor.A;
         private readonly ColorState _colorState = new ColorState(DefaultColor.ToRgb());
 
-        public ColorPicker()
+        static ColorPicker()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ColorPicker), new FrameworkPropertyMetadata(typeof(ColorPicker)));
+        }
 
+        public ColorPicker()
+        {
             Loaded += OnLoaded;
         }
 
