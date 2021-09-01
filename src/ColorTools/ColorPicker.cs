@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace ColorTools
@@ -17,7 +15,6 @@ namespace ColorTools
     [TemplatePart(Name = nameof(HslSaturationSlider), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HslLightnessSlider), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HsbSaturationBrightnessCanvas), Type = typeof(ColorCanvas))]
-    [TemplatePart(Name = nameof(ColorModelSelector), Type = typeof(Selector))]
     public class ColorPicker : Control
     {
         private static readonly Color DefaultColor = Colors.Red;
@@ -62,7 +59,6 @@ namespace ColorTools
         private ColorSlider? _hslSaturationSlider;
         private ColorSlider? _hslLightnessSlider;
         private ColorCanvas? _hsbSaturationBrightnessCanvas;
-        private Selector? _colorModelSelector;
 
         private bool _isUpdating;
 
@@ -356,20 +352,6 @@ namespace ColorTools
             }
         }
 
-        private Selector? ColorModelSelector
-        {
-            get => _colorModelSelector;
-            set
-            {
-                _colorModelSelector = value;
-
-                if (_colorModelSelector != null)
-                {
-                    _colorModelSelector.ItemsSource = Enum.GetValues<ColorModel>();
-                }
-            }
-        }
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -387,21 +369,11 @@ namespace ColorTools
             HslLightnessSlider = GetTemplateChild(nameof(HslLightnessSlider)) as ColorSlider;
 
             HsbSaturationBrightnessCanvas = GetTemplateChild(nameof(HsbSaturationBrightnessCanvas)) as ColorCanvas;
-
-            ColorModelSelector = GetTemplateChild(nameof(ColorModelSelector)) as Selector;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             ReplaceSelectedColor(SelectedColor);
-        }
-
-        private static void OnColorModelPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            if (sender is ColorPicker colorPicker)
-            {
-                colorPicker.OnColorModelChanged();
-            }
         }
 
         private static void OnSelectedColorPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -434,10 +406,6 @@ namespace ColorTools
             {
                 colorPicker.OnAllowAlphaChanged();
             }
-        }
-
-        private void OnColorModelChanged()
-        {
         }
 
         private void OnSelectedColorChanged()

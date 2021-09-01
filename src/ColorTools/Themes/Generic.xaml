@@ -80,12 +80,20 @@
                                            Grid.ColumnSpan="2"
                                            Margin="0,0,0,12" />
                         <StackPanel Grid.Row="1" Grid.Column="0">
-                            <TextBlock x:Name="ModelLabel"
-                                       Margin="0,0,0,4"
-                                       Text="Model" />
-                            <ComboBox x:Name="ColorModelSelector"
-                                      Margin="0,0,0,12"
-                                      SelectedValue="{Binding ColorModel, RelativeSource={RelativeSource TemplatedParent}}" />
+                            <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                <RadioButton x:Name="HslColorModel"
+                                             Content="HSL"
+                                             GroupName="ColorModel"
+                                             IsChecked="True" />
+                                <RadioButton x:Name="HsbColorModel"
+                                             Margin="8,0,0,0"
+                                             Content="HSB"
+                                             GroupName="ColorModel" />
+                                <RadioButton x:Name="RgbColorModel"
+                                             Margin="8,0,0,0"
+                                             Content="RGB"
+                                             GroupName="ColorModel" />
+                            </StackPanel>
                             <StackPanel x:Name="HslContainer" Visibility="Collapsed">
                                 <color:ColorSlider x:Name="HslHueSlider"
                                                    Margin="0,0,0,8"
@@ -191,13 +199,13 @@
                         <Trigger Property="AllowAlpha" Value="False">
                             <Setter TargetName="AlphaSlider" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <Trigger Property="ColorModel" Value="{x:Static color:ColorModel.Hsl}">
+                        <Trigger SourceName="HslColorModel" Property="IsChecked" Value="True">
                             <Setter TargetName="HslContainer" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <Trigger Property="ColorModel" Value="{x:Static color:ColorModel.Hsb}">
+                        <Trigger SourceName="HsbColorModel" Property="IsChecked" Value="True">
                             <Setter TargetName="HsbContainer" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <Trigger Property="ColorModel" Value="{x:Static color:ColorModel.Rgb}">
+                        <Trigger SourceName="RgbColorModel" Property="IsChecked" Value="True">
                             <Setter TargetName="RgbContainer" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
