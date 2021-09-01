@@ -21,6 +21,9 @@ namespace ColorTools
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(ColorSlider), new PropertyMetadata(100d, OnMaximumPropertyChanged));
 
+        public static readonly DependencyProperty OrientationProperty =
+            DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(ColorSlider), new PropertyMetadata(Orientation.Horizontal));
+
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register(nameof(Header), typeof(object), typeof(ColorSlider), new PropertyMetadata(null));
 
@@ -68,6 +71,12 @@ namespace ColorTools
             set => SetValue(MaximumProperty, value);
         }
 
+        public Orientation Orientation
+        {
+            get => (Orientation)GetValue(OrientationProperty);
+            set => SetValue(OrientationProperty, value);
+        }
+
         public object? Header
         {
             get => GetValue(HeaderProperty);
@@ -113,7 +122,18 @@ namespace ColorTools
                     _componentCanvas.SizeChanged += OnComponentCanvasSizeChanged;
 
                     _componentCanvas.Background = _brushSource?.Brush;
+
+                    UpdateBackgroundOrientation();
                 }
+            }
+        }
+
+        private void UpdateBackgroundOrientation()
+        {
+            if (ComponentCanvas?.Background is LinearGradientBrush brush)
+            {
+                brush.StartPoint = Orientation == Orientation.Vertical ? new Point(0, 1) : new Point(0, 0);
+                brush.EndPoint = Orientation == Orientation.Vertical ? new Point(0, 0) : new Point(1, 0);
             }
         }
 
@@ -246,7 +266,7 @@ namespace ColorTools
                 return;
             }
 
-            UpdateHandleNewPosition(args.GetPosition(ComponentCanvas).X);
+            UpdateHandleNewPosition(GetMousePosition(args.GetPosition(ComponentCanvas)));
 
             _isDragging = true;
             ComponentCanvas.CaptureMouse();
@@ -277,7 +297,7 @@ namespace ColorTools
                 return;
             }
 
-            UpdateHandleNewPosition(args.GetPosition(ComponentCanvas).X);
+            UpdateHandleNewPosition(GetMousePosition(args.GetPosition(ComponentCanvas)));
 
             args.Handled = true;
         }
@@ -361,13 +381,13 @@ namespace ColorTools
                 return;
             }
 
-            var (offset, width) = GetLayoutInfo();
-            if (width <= 0)
+            var (offset, size) = GetLayoutInfo();
+            if (size <= 0)
             {
                 return;
             }
 
-            HandleTranslateTransform.X = ValueToHandlePosition(Value, offset, width, Minimum, Maximum);
+            SetHandlePosition(ValueToHandlePosition(Value, offset, size, Minimum, Maximum, Orientation == Orientation.Vertical));
         }
 
         private void UpdateHandleNewPosition(double mousePosition)
@@ -377,55 +397,90 @@ namespace ColorTools
                 return;
             }
 
-            var (offset, width) = GetLayoutInfo();
-            if (width <= 0)
+            var (offset, size) = GetLayoutInfo();
+            if (size <= 0)
             {
                 return;
             }
 
-            HandleTranslateTransform.X = MousePositionToHandlePosition(mousePosition, offset, width);
+            SetHandlePosition(MousePositionToHandlePosition(mousePosition, offset, size));
 
-            SetCurrentValue(ValueProperty, MousePositionToValue(mousePosition, offset, width, Minimum, Maximum));
+            SetCurrentValue(ValueProperty, MousePositionToValue(mousePosition, offset, size, Minimum, Maximum, Orientation == Orientation.Vertical));
         }
 
-        private (double offset, double width) GetLayoutInfo()
+        private (double offset, double size) GetLayoutInfo()
         {
             if (ComponentCanvas == null || Handle == null)
             {
                 return default;
             }
 
-            var offset = Handle.Width / 2;
-            var width = ComponentCanvas.ActualWidth - Handle.Width;
-            return (offset, width);
+            return Orientation == Orientation.Vertical
+                ? (Handle.Height / 2, ComponentCanvas.ActualHeight - Handle.Height)
+                : (Handle.Width / 2, ComponentCanvas.ActualWidth - Handle.Width);
         }
 
-        private static double ValueToHandlePosition(double value, double offset, double width, double min, double max)
+        private double GetMousePosition(Point mousePosition)
         {
-            return offset + width * ((value - min) / (max - min));
+            return Orientation == Orientation.Vertical ? mousePosition.Y : mousePosition.X;
         }
 
-        private static double MousePositionToHandlePosition(double mousePosition, double offset, double width)
+        private void SetHandlePosition(double handlePosition)
+        {
+            if (HandleTranslateTransform == null)
+            {
+                return;
+            }
+
+            if (Orientation == Orientation.Vertical)
+            {
+                HandleTranslateTransform.Y = handlePosition;
+            }
+            else
+            {
+                HandleTranslateTransform.X = handlePosition;
+            }
+        }
+
+        private static double ValueToHandlePosition(double value, double offset, double size, double min, double max, bool invert)
+        {
+            var position = ((value - min) / (max - min));
+
+            if (invert)
+            {
+                position = 1 - position;
+            }
+
+            return offset + size * position;
+        }
+
+        private static double MousePositionToHandlePosition(double mousePosition, double offset, double size)
         {
             if (mousePosition < offset)
             {
                 mousePosition = offset;
             }
-            if (mousePosition > width + offset)
+            if (mousePosition > size + offset)
             {
-                mousePosition = width + offset;
+                mousePosition = size + offset;
             }
             return mousePosition;
         }
 
-        private static double MousePositionToValue(double mousePosition, double offset, double width, double min, double max)
+        private static double MousePositionToValue(double mousePosition, double offset, double size, double min, double max, bool invert)
         {
-            var value = ((mousePosition - offset) / width) switch
+            var value = ((mousePosition - offset) / size) switch
             {
                 < 0 => 0,
                 > 1 => 1,
                 var v => v,
             };
+
+            if (invert)
+            {
+                value = 1 - value;
+            }
+
             return min + value * (max - min);
         }
 

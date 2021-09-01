@@ -15,6 +15,7 @@ namespace ColorTools
     [TemplatePart(Name = nameof(HslSaturationSlider), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HslLightnessSlider), Type = typeof(ColorSlider))]
     [TemplatePart(Name = nameof(HsbSaturationBrightnessCanvas), Type = typeof(ColorCanvas))]
+    [TemplatePart(Name = nameof(HsbHueCanvasSlider), Type = typeof(ColorSlider))]
     public class ColorPicker : Control
     {
         private static readonly Color DefaultColor = Colors.Red;
@@ -23,7 +24,7 @@ namespace ColorTools
         // TODO: Add routed events: SelectedColorChanged, SelectedHexChanged
 
         public static readonly DependencyProperty ColorModelProperty =
-            DependencyProperty.Register(nameof(ColorModel), typeof(ColorModel), typeof(ColorPicker), new PropertyMetadata(ColorModel.Hsl, OnColorModelPropertyChanged));
+            DependencyProperty.Register(nameof(ColorModel), typeof(ColorModel), typeof(ColorPicker), new PropertyMetadata(ColorModel.Hsl));
 
         public static readonly DependencyProperty SelectedColorProperty =
             DependencyProperty.Register(nameof(SelectedColor), typeof(Color?), typeof(ColorPicker),
@@ -59,6 +60,7 @@ namespace ColorTools
         private ColorSlider? _hslSaturationSlider;
         private ColorSlider? _hslLightnessSlider;
         private ColorCanvas? _hsbSaturationBrightnessCanvas;
+        private ColorSlider? _hsbHueCanvasSlider;
 
         private bool _isUpdating;
 
@@ -352,6 +354,27 @@ namespace ColorTools
             }
         }
 
+        private ColorSlider? HsbHueCanvasSlider
+        {
+            get => _hsbHueCanvasSlider;
+            set
+            {
+                if (_hsbHueCanvasSlider != null)
+                {
+                    _hsbHueCanvasSlider.ValueChanged -= OnHsbHueChanged;
+                }
+
+                _hsbHueCanvasSlider = value;
+
+                if (_hsbHueCanvasSlider != null)
+                {
+                    _hsbHueCanvasSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 7, static (value, _) => new HsbColor(value * 360, 100, 100).ToColor()));
+                    _hsbHueCanvasSlider.Update(_colorState.Hsb.H);
+                    _hsbHueCanvasSlider.ValueChanged += OnHsbHueChanged;
+                }
+            }
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -369,6 +392,7 @@ namespace ColorTools
             HslLightnessSlider = GetTemplateChild(nameof(HslLightnessSlider)) as ColorSlider;
 
             HsbSaturationBrightnessCanvas = GetTemplateChild(nameof(HsbSaturationBrightnessCanvas)) as ColorCanvas;
+            HsbHueCanvasSlider = GetTemplateChild(nameof(HsbHueCanvasSlider)) as ColorSlider;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
@@ -675,6 +699,7 @@ namespace ColorTools
                 HslLightnessSlider?.Update(_colorState.Hsl.L);
 
                 HsbSaturationBrightnessCanvas?.Update(new Point(_colorState.Hsb.S * 0.01, _colorState.Hsb.B * 0.01));
+                HsbHueCanvasSlider?.Update(_colorState.Hsb.H);
             }
             finally
             {
