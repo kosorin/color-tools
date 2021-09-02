@@ -23,6 +23,11 @@ namespace ColorTools
 
         // TODO: Add routed events: SelectedColorChanged, SelectedHexChanged
 
+        private static readonly DependencyPropertyKey ColorStatePropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(ColorState), typeof(IColorState), typeof(ColorPicker), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty ColorStateProperty = ColorStatePropertyKey.DependencyProperty;
+
         public static readonly DependencyProperty ColorModelProperty =
             DependencyProperty.Register(nameof(ColorModel), typeof(ColorModel), typeof(ColorPicker), new PropertyMetadata(ColorModel.Hsl));
 
@@ -76,6 +81,12 @@ namespace ColorTools
         public ColorPicker()
         {
             Loaded += OnLoaded;
+        }
+
+        public IColorState ColorState
+        {
+            get => (IColorState)GetValue(ColorStateProperty);
+            private set => SetValue(ColorStatePropertyKey, value);
         }
 
         public ColorModel ColorModel
@@ -140,7 +151,6 @@ namespace ColorTools
 
                 if (_alphaSlider != null)
                 {
-                    _alphaSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 2, static (value, colorState) => colorState.Rgb.ToColor((byte)(value * 255))));
                     _alphaSlider.Update(_alpha);
                     _alphaSlider.ValueChanged += OnAlphaChanged;
                 }
@@ -161,7 +171,6 @@ namespace ColorTools
 
                 if (_rgbRedSlider != null)
                 {
-                    _rgbRedSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 2, static (value, colorState) => new RgbColor((byte)(value * 255), colorState.Rgb.G, colorState.Rgb.B).ToColor()));
                     _rgbRedSlider.Update(_colorState.Rgb.R);
                     _rgbRedSlider.ValueChanged += OnRgbRedChanged;
                 }
@@ -182,7 +191,6 @@ namespace ColorTools
 
                 if (_rgbGreenSlider != null)
                 {
-                    _rgbGreenSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 2, static (value, colorState) => new RgbColor(colorState.Rgb.R, (byte)(value * 255), colorState.Rgb.B).ToColor()));
                     _rgbGreenSlider.Update(_colorState.Rgb.G);
                     _rgbGreenSlider.ValueChanged += OnRgbGreenChanged;
                 }
@@ -203,7 +211,6 @@ namespace ColorTools
 
                 if (_rgbBlueSlider != null)
                 {
-                    _rgbBlueSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 2, static (value, colorState) => new RgbColor(colorState.Rgb.R, colorState.Rgb.G, (byte)(value * 255)).ToColor()));
                     _rgbBlueSlider.Update(_colorState.Rgb.B);
                     _rgbBlueSlider.ValueChanged += OnRgbBlueChanged;
                 }
@@ -224,7 +231,6 @@ namespace ColorTools
 
                 if (_hsbHueSlider != null)
                 {
-                    _hsbHueSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 7, static (value, colorState) => new HsbColor(value * 360, colorState.Hsb.S, colorState.Hsb.B).ToColor()));
                     _hsbHueSlider.Update(_colorState.Hsb.H);
                     _hsbHueSlider.ValueChanged += OnHsbHueChanged;
                 }
@@ -245,7 +251,6 @@ namespace ColorTools
 
                 if (_hsbSaturationSlider != null)
                 {
-                    _hsbSaturationSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 2, static (value, colorState) => new HsbColor(colorState.Hsb.H, value * 100, colorState.Hsb.B).ToColor()));
                     _hsbSaturationSlider.Update(_colorState.Hsb.S);
                     _hsbSaturationSlider.ValueChanged += OnHsbSaturationChanged;
                 }
@@ -266,7 +271,6 @@ namespace ColorTools
 
                 if (_hsbBrightnessSlider != null)
                 {
-                    _hsbBrightnessSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 2, static (value, colorState) => new HsbColor(colorState.Hsb.H, colorState.Hsb.S, value * 100).ToColor()));
                     _hsbBrightnessSlider.Update(_colorState.Hsb.B);
                     _hsbBrightnessSlider.ValueChanged += OnHsbBrightnessChanged;
                 }
@@ -287,7 +291,6 @@ namespace ColorTools
 
                 if (_hslHueSlider != null)
                 {
-                    _hslHueSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 7, static (value, colorState) => new HslColor(value * 360, colorState.Hsl.S, colorState.Hsl.L).ToColor()));
                     _hslHueSlider.Update(_colorState.Hsl.H);
                     _hslHueSlider.ValueChanged += OnHslHueChanged;
                 }
@@ -308,7 +311,6 @@ namespace ColorTools
 
                 if (_hslSaturationSlider != null)
                 {
-                    _hslSaturationSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 2, static (value, colorState) => new HslColor(colorState.Hsl.H, value * 100, colorState.Hsl.L).ToColor()));
                     _hslSaturationSlider.Update(_colorState.Hsl.S);
                     _hslSaturationSlider.ValueChanged += OnHslSaturationChanged;
                 }
@@ -329,7 +331,6 @@ namespace ColorTools
 
                 if (_hslLightnessSlider != null)
                 {
-                    _hslLightnessSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 3, static (value, colorState) => new HslColor(colorState.Hsl.H, colorState.Hsl.S, value * 100).ToColor()));
                     _hslLightnessSlider.Update(_colorState.Hsl.L);
                     _hslLightnessSlider.ValueChanged += OnHslLightnessChanged;
                 }
@@ -350,7 +351,6 @@ namespace ColorTools
 
                 if (_hsbSaturationBrightnessCanvas != null)
                 {
-                    _hsbSaturationBrightnessCanvas.InitializeBrushSource(new HsbCanvasBrushSource(_colorState));
                     _hsbSaturationBrightnessCanvas.Update(new Point(_colorState.Hsb.S * 0.01, _colorState.Hsb.B * 0.01));
                     _hsbSaturationBrightnessCanvas.ValueChanged += OnHsbSaturationBrightnessChanged;
                 }
@@ -371,7 +371,6 @@ namespace ColorTools
 
                 if (_hsbHueCanvasSlider != null)
                 {
-                    _hsbHueCanvasSlider.InitializeBrushSource(new SliderBrushSource(_colorState, 7, static (value, _) => new HsbColor(value * 360, 100, 100).ToColor()));
                     _hsbHueCanvasSlider.Update(_colorState.Hsb.H);
                     _hsbHueCanvasSlider.ValueChanged += OnHsbHueChanged;
                 }
@@ -401,6 +400,8 @@ namespace ColorTools
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             ReplaceSelectedColor(SelectedColor);
+
+            ColorState = _colorState;
         }
 
         private static void OnSelectedColorPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)

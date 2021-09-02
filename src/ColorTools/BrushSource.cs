@@ -1,41 +1,41 @@
+using System.Windows;
 using System.Windows.Media;
 
 namespace ColorTools
 {
-    public abstract class BrushSource
+    public abstract class BrushSource : FrameworkElement, IColorStateSubscriber
     {
         protected static readonly Color DefaultColor = Colors.Transparent;
 
-        protected BrushSource(IColorState colorState)
+        private static readonly DependencyPropertyKey ValuePropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(Value), typeof(Brush), typeof(BrushSource), new PropertyMetadata(new SolidColorBrush(DefaultColor)));
+
+        public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
+
+        public static readonly DependencyProperty BackgroundProperty =
+            DependencyProperty.RegisterAttached("Background", typeof(BrushSource), typeof(BrushSource), new PropertyMetadata(null));
+
+        public Brush Value
         {
-            ColorState = colorState;
+            get => (Brush)GetValue(ValueProperty);
+            protected set => SetValue(ValuePropertyKey, value);
         }
 
-        private BrushSource()
+        public static BrushSource GetBackground(DependencyObject obj)
         {
-            ColorState = null!;
+            return (BrushSource)obj.GetValue(BackgroundProperty);
         }
 
-        public static BrushSource Empty { get; } = new EmptyBrushSource();
-
-        public abstract Brush Brush { get; }
-
-        protected IColorState ColorState { get; }
-
-        public abstract void Update();
-
-        private class EmptyBrushSource : BrushSource
+        public static void SetBackground(DependencyObject obj, BrushSource? value)
         {
-            public EmptyBrushSource()
-            {
-                Brush = new SolidColorBrush(DefaultColor);
-            }
+            obj.SetValue(BackgroundProperty, value);
+        }
 
-            public override Brush Brush { get; }
+        protected abstract void Update(IColorState colorState);
 
-            public override void Update()
-            {
-            }
+        void IColorStateSubscriber.HandleColorStateChanged(IColorState colorState)
+        {
+            Update(colorState);
         }
     }
 }

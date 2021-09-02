@@ -7,5 +7,7 @@ namespace ColorTools
         HsbColor Hsb { get; }
 
         HslColor Hsl { get; }
+
+        event ColorStateChanged? Changed;
     }
 }

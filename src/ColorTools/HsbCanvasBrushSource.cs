@@ -5,21 +5,18 @@ namespace ColorTools
 {
     public class HsbCanvasBrushSource : BrushSource
     {
-        private readonly DrawingBrush _brush;
         private readonly SolidColorBrush _accentBrush;
 
-        public HsbCanvasBrushSource(IColorState colorState)
-            : base(colorState)
+        public HsbCanvasBrushSource()
         {
             _accentBrush = new SolidColorBrush(DefaultColor);
-            _brush = CreateBrush(_accentBrush);
+
+            Value = CreateBrush(_accentBrush);
         }
 
-        public override Brush Brush => _brush;
-
-        public override void Update()
+        protected override void Update(IColorState colorState)
         {
-            _accentBrush.Color = new HsbColor(ColorState.Hsb.H, 100, 100).ToColor();
+            _accentBrush.Color = new HsbColor(colorState.Hsb.H, 100, 100).ToColor();
         }
 
         private static DrawingBrush CreateBrush(Brush accentBrush)

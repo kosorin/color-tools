@@ -8,7 +8,7 @@ namespace ColorTools
     [TemplatePart(Name = nameof(ComponentCanvas), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(Handle), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(HandleTranslateTransform), Type = typeof(TranslateTransform))]
-    public class ColorCanvas : Control
+    public class ColorCanvas : ColorComponent
     {
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(Point), typeof(ColorCanvas),
@@ -30,7 +30,6 @@ namespace ColorTools
 
         private bool _isValueUpdating;
         private bool _isDragging;
-        private BrushSource? _brushSource = BrushSource.Empty;
 
         static ColorCanvas()
         {
@@ -78,8 +77,6 @@ namespace ColorTools
                     _componentCanvas.MouseLeftButtonUp -= OnComponentCanvasMouseLeftButtonUp;
                     _componentCanvas.MouseMove -= OnComponentCanvasMouseMove;
                     _componentCanvas.SizeChanged -= OnComponentCanvasSizeChanged;
-
-                    _componentCanvas.Background = null;
                 }
 
                 _componentCanvas = value;
@@ -90,8 +87,6 @@ namespace ColorTools
                     _componentCanvas.MouseLeftButtonUp += OnComponentCanvasMouseLeftButtonUp;
                     _componentCanvas.MouseMove += OnComponentCanvasMouseMove;
                     _componentCanvas.SizeChanged += OnComponentCanvasSizeChanged;
-
-                    _componentCanvas.Background = _brushSource?.Brush;
                 }
             }
         }
@@ -103,13 +98,6 @@ namespace ColorTools
         public void Update(Point value)
         {
             Value = value;
-
-            UpdateBrushSource();
-        }
-
-        public void InitializeBrushSource(BrushSource brushSource)
-        {
-            _brushSource = brushSource;
         }
 
         public override void OnApplyTemplate()
@@ -121,19 +109,16 @@ namespace ColorTools
             HandleTranslateTransform = GetTemplateChild(nameof(HandleTranslateTransform)) as TranslateTransform;
 
             UpdateHandleCurrentPosition();
-            UpdateBrushSource();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             UpdateHandleCurrentPosition();
-            UpdateBrushSource();
         }
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
         {
             UpdateHandleCurrentPosition();
-            UpdateBrushSource();
         }
 
         private static void OnValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -253,16 +238,6 @@ namespace ColorTools
             {
                 SetCurrentValue(ValueProperty, new Point(x, y));
             }
-        }
-
-        private void UpdateBrushSource()
-        {
-            if (!IsVisible || ComponentCanvas == null)
-            {
-                return;
-            }
-
-            _brushSource?.Update();
         }
 
         private void UpdateHandleCurrentPosition()

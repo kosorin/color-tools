@@ -94,13 +94,21 @@
                                     </Grid.ColumnDefinitions>
                                     <color:ColorCanvas x:Name="HsbSaturationBrightnessCanvas"
                                                        Grid.Column="0"
-                                                       Margin="0,0,12,0" />
+                                                       Margin="0,0,12,0">
+                                        <color:BrushSource.Background>
+                                            <color:HsbCanvasBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorCanvas>
                                     <color:ColorSlider x:Name="HsbHueCanvasSlider"
                                                        Grid.Column="1"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Maximum="360"
                                                        Minimum="0"
-                                                       Orientation="Vertical" />
+                                                       Orientation="Vertical">
+                                        <color:BrushSource.Background>
+                                            <color:HueGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" Orientation="Vertical" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                 </Grid>
                             </Grid>
                             <StackPanel Grid.Row="1" Grid.Column="0">
@@ -124,19 +132,31 @@
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Hue"
                                                        Maximum="360"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:HslHueGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                     <color:ColorSlider x:Name="HslSaturationSlider"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Saturation"
                                                        Maximum="100"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:HslSaturationGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                     <color:ColorSlider x:Name="HslLightnessSlider"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Lightness"
                                                        Maximum="100"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:HslLightnessGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                 </StackPanel>
                                 <StackPanel x:Name="HsbContainer" Visibility="Collapsed">
                                     <color:ColorSlider x:Name="HsbHueSlider"
@@ -144,19 +164,31 @@
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Hue"
                                                        Maximum="360"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:HsbHueGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                     <color:ColorSlider x:Name="HsbSaturationSlider"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Saturation"
                                                        Maximum="100"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:HsbSaturationGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                     <color:ColorSlider x:Name="HsbBrightnessSlider"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Brightness"
                                                        Maximum="100"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:HsbBrightnessGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                 </StackPanel>
                                 <StackPanel x:Name="RgbContainer" Visibility="Collapsed">
                                     <color:ColorSlider x:Name="RgbRedSlider"
@@ -164,26 +196,42 @@
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Red"
                                                        Maximum="255"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:RgbRedGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                     <color:ColorSlider x:Name="RgbGreenSlider"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Green"
                                                        Maximum="255"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:RgbGreenGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                     <color:ColorSlider x:Name="RgbBlueSlider"
                                                        Margin="0,0,0,8"
                                                        AlphaBrush="{TemplateBinding AlphaBrush}"
                                                        Header="Blue"
                                                        Maximum="255"
-                                                       Minimum="0" />
+                                                       Minimum="0">
+                                        <color:BrushSource.Background>
+                                            <color:RgbBlueGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </color:BrushSource.Background>
+                                    </color:ColorSlider>
                                 </StackPanel>
                                 <color:ColorSlider x:Name="AlphaSlider"
                                                    Margin="0,0,0,8"
                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
                                                    Header="Opacity"
                                                    Maximum="255"
-                                                   Minimum="0" />
+                                                   Minimum="0">
+                                    <color:BrushSource.Background>
+                                        <color:AlphaGradientBrushSource color:ColorState.Subscribe="{Binding ColorState, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    </color:BrushSource.Background>
+                                </color:ColorSlider>
                             </StackPanel>
                             <StackPanel Grid.Row="1"
                                         Grid.Column="1"
@@ -286,7 +334,9 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 UseLayoutRounding="True">
-                            <Canvas x:Name="ComponentCanvas" Cursor="SizeWE">
+                            <Canvas x:Name="ComponentCanvas"
+                                    Background="{Binding Path=(color:BrushSource.Background).Value, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Cursor="SizeWE">
                                 <Border x:Name="Handle"
                                         Width="10"
                                         Height="{Binding ActualHeight, ElementName=ComponentCanvas}"
@@ -338,7 +388,9 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             ClipToBounds="False"
                             UseLayoutRounding="True">
-                        <Canvas x:Name="ComponentCanvas" Cursor="Cross">
+                        <Canvas x:Name="ComponentCanvas"
+                                Background="{Binding Path=(color:BrushSource.Background).Value, RelativeSource={RelativeSource TemplatedParent}}"
+                                Cursor="Cross">
                             <Canvas x:Name="Handle"
                                     Width="13"
                                     Height="13"

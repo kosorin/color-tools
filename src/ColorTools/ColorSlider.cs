@@ -9,7 +9,7 @@ namespace ColorTools
     [TemplatePart(Name = nameof(ComponentCanvas), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(Handle), Type = typeof(Border))]
     [TemplatePart(Name = nameof(HandleTranslateTransform), Type = typeof(TranslateTransform))]
-    public class ColorSlider : Control
+    public class ColorSlider : ColorComponent
     {
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(double), typeof(ColorSlider),
@@ -40,7 +40,6 @@ namespace ColorTools
 
         private bool _isValueUpdating;
         private bool _isDragging;
-        private BrushSource? _brushSource = BrushSource.Empty;
 
         static ColorSlider()
         {
@@ -107,8 +106,6 @@ namespace ColorTools
                     _componentCanvas.MouseMove -= OnComponentCanvasMouseMove;
                     _componentCanvas.MouseWheel -= OnComponentCanvasMouseWheel;
                     _componentCanvas.SizeChanged -= OnComponentCanvasSizeChanged;
-
-                    _componentCanvas.Background = null;
                 }
 
                 _componentCanvas = value;
@@ -120,20 +117,7 @@ namespace ColorTools
                     _componentCanvas.MouseMove += OnComponentCanvasMouseMove;
                     _componentCanvas.MouseWheel += OnComponentCanvasMouseWheel;
                     _componentCanvas.SizeChanged += OnComponentCanvasSizeChanged;
-
-                    _componentCanvas.Background = _brushSource?.Brush;
-
-                    UpdateBackgroundOrientation();
                 }
-            }
-        }
-
-        private void UpdateBackgroundOrientation()
-        {
-            if (ComponentCanvas?.Background is LinearGradientBrush brush)
-            {
-                brush.StartPoint = Orientation == Orientation.Vertical ? new Point(0, 1) : new Point(0, 0);
-                brush.EndPoint = Orientation == Orientation.Vertical ? new Point(0, 0) : new Point(1, 0);
             }
         }
 
@@ -144,13 +128,6 @@ namespace ColorTools
         public void Update(double value)
         {
             SetCurrentValue(ValueProperty, value);
-
-            UpdateBrushSource();
-        }
-
-        public void InitializeBrushSource(BrushSource brushSource)
-        {
-            _brushSource = brushSource;
         }
 
         public override void OnApplyTemplate()
@@ -162,19 +139,16 @@ namespace ColorTools
             HandleTranslateTransform = GetTemplateChild(nameof(HandleTranslateTransform)) as TranslateTransform;
 
             UpdateHandleCurrentPosition();
-            UpdateBrushSource();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             UpdateHandleCurrentPosition();
-            UpdateBrushSource();
         }
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
         {
             UpdateHandleCurrentPosition();
-            UpdateBrushSource();
         }
 
         protected override void OnKeyDown(KeyEventArgs args)
@@ -348,16 +322,6 @@ namespace ColorTools
             }
         }
 
-        private void UpdateBrushSource()
-        {
-            if (!IsVisible || ComponentCanvas == null)
-            {
-                return;
-            }
-
-            _brushSource?.Update();
-        }
-
         private void MoveHandle(int sign)
         {
             if (sign == 0)
@@ -444,7 +408,7 @@ namespace ColorTools
 
         private static double ValueToHandlePosition(double value, double offset, double size, double min, double max, bool invert)
         {
-            var position = ((value - min) / (max - min));
+            var position = (value - min) / (max - min);
 
             if (invert)
             {

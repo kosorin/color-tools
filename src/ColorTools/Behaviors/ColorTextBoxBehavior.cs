@@ -12,14 +12,14 @@ namespace ColorTools.Behaviors
         public static readonly DependencyProperty EnableProperty =
             DependencyProperty.RegisterAttached("Enable", typeof(bool), typeof(ColorTextBoxBehavior), new PropertyMetadata(false, OnEnablePropertyChanged));
 
-        public static bool GetEnable(TextBox textBox)
+        public static bool GetEnable(DependencyObject obj)
         {
-            return (bool)textBox.GetValue(EnableProperty);
+            return (bool)obj.GetValue(EnableProperty);
         }
 
-        public static void SetEnable(TextBox textBox, bool value)
+        public static void SetEnable(DependencyObject obj, bool value)
         {
-            textBox.SetValue(EnableProperty, value);
+            obj.SetValue(EnableProperty, value);
         }
 
         private static void OnEnablePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)

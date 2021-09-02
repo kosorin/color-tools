@@ -5,21 +5,18 @@ namespace ColorTools
 {
     public class HslCanvasBrushSource : BrushSource
     {
-        private readonly DrawingBrush _brush;
         private readonly GradientStop _accentGradientStop;
 
-        public HslCanvasBrushSource(IColorState colorState)
-            : base(colorState)
+        public HslCanvasBrushSource()
         {
             _accentGradientStop = new GradientStop(DefaultColor, 1);
-            _brush = CreateBrush(_accentGradientStop);
+
+            Value = CreateBrush(_accentGradientStop);
         }
 
-        public override Brush Brush => _brush;
-
-        public override void Update()
+        protected override void Update(IColorState colorState)
         {
-            _accentGradientStop.Color = new HslColor(ColorState.Hsl.H, 100, 50).ToColor();
+            _accentGradientStop.Color = new HslColor(colorState.Hsl.H, 100, 50).ToColor();
         }
 
         private static DrawingBrush CreateBrush(GradientStop accentGradientStop)
