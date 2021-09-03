@@ -506,7 +506,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new RgbColor(args.NewValue, _colorState.Rgb.G, _colorState.Rgb.B));
+            _colorState.Update(new RgbColor(args.NewValue * 255, _colorState.Rgb.G, _colorState.Rgb.B));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -519,7 +519,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new RgbColor(_colorState.Rgb.R, args.NewValue, _colorState.Rgb.B));
+            _colorState.Update(new RgbColor(_colorState.Rgb.R, args.NewValue * 255, _colorState.Rgb.B));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -532,7 +532,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new RgbColor(_colorState.Rgb.R, _colorState.Rgb.G, args.NewValue));
+            _colorState.Update(new RgbColor(_colorState.Rgb.R, _colorState.Rgb.G, args.NewValue * 255));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -545,7 +545,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new HsbColor(args.NewValue, _colorState.Hsb.S, _colorState.Hsb.B));
+            _colorState.Update(new HsbColor(args.NewValue * 360, _colorState.Hsb.S, _colorState.Hsb.B));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -558,7 +558,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new HsbColor(_colorState.Hsb.H, args.NewValue, _colorState.Hsb.B));
+            _colorState.Update(new HsbColor(_colorState.Hsb.H, args.NewValue * 100, _colorState.Hsb.B));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -571,7 +571,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new HsbColor(_colorState.Hsb.H, _colorState.Hsb.S, args.NewValue));
+            _colorState.Update(new HsbColor(_colorState.Hsb.H, _colorState.Hsb.S, args.NewValue * 100));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -584,7 +584,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new HslColor(args.NewValue, _colorState.Hsl.S, _colorState.Hsl.L));
+            _colorState.Update(new HslColor(args.NewValue * 360, _colorState.Hsl.S, _colorState.Hsl.L));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -597,7 +597,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new HslColor(_colorState.Hsl.H, args.NewValue, _colorState.Hsl.L));
+            _colorState.Update(new HslColor(_colorState.Hsl.H, args.NewValue * 100, _colorState.Hsl.L));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -610,7 +610,7 @@ namespace ColorTools
                 return;
             }
 
-            _colorState.Update(new HslColor(_colorState.Hsl.H, _colorState.Hsl.S, args.NewValue));
+            _colorState.Update(new HslColor(_colorState.Hsl.H, _colorState.Hsl.S, args.NewValue * 100));
 
             UpdateSelectedColor();
             UpdateComponents();
@@ -692,18 +692,18 @@ namespace ColorTools
             {
                 AlphaSlider?.Update(_alpha);
 
-                RgbRedSlider?.Update(_colorState.Rgb.R);
-                RgbGreenSlider?.Update(_colorState.Rgb.G);
-                RgbBlueSlider?.Update(_colorState.Rgb.B);
-                HsbHueSlider?.Update(_colorState.Hsb.H);
-                HsbSaturationSlider?.Update(_colorState.Hsb.S);
-                HsbBrightnessSlider?.Update(_colorState.Hsb.B);
-                HslHueSlider?.Update(_colorState.Hsl.H);
-                HslSaturationSlider?.Update(_colorState.Hsl.S);
-                HslLightnessSlider?.Update(_colorState.Hsl.L);
+                RgbRedSlider?.Update(_colorState.Rgb.R / 255);
+                RgbGreenSlider?.Update(_colorState.Rgb.G / 255);
+                RgbBlueSlider?.Update(_colorState.Rgb.B / 255);
+                HsbHueSlider?.Update(_colorState.Hsb.H / 360);
+                HsbSaturationSlider?.Update(_colorState.Hsb.S / 100);
+                HsbBrightnessSlider?.Update(_colorState.Hsb.B / 100);
+                HslHueSlider?.Update(_colorState.Hsl.H / 360);
+                HslSaturationSlider?.Update(_colorState.Hsl.S / 100);
+                HslLightnessSlider?.Update(_colorState.Hsl.L / 100);
 
-                HsbSaturationBrightnessCanvas?.Update(new Point(_colorState.Hsb.S * 0.01, _colorState.Hsb.B * 0.01));
-                HsbHueCanvasSlider?.Update(_colorState.Hsb.H);
+                HsbSaturationBrightnessCanvas?.Update(new Point(_colorState.Hsb.S / 100, _colorState.Hsb.B / 100));
+                HsbHueCanvasSlider?.Update(_colorState.Hsb.H / 360);
             }
             finally
             {

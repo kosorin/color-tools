@@ -15,12 +15,6 @@ namespace ColorTools
             DependencyProperty.Register(nameof(Value), typeof(double), typeof(ColorSlider),
                 new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged));
 
-        public static readonly DependencyProperty MinimumProperty =
-            DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(ColorSlider), new PropertyMetadata(0d, OnMinimumPropertyChanged));
-
-        public static readonly DependencyProperty MaximumProperty =
-            DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(ColorSlider), new PropertyMetadata(100d, OnMaximumPropertyChanged));
-
         public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(ColorSlider), new PropertyMetadata(Orientation.Horizontal));
 
@@ -56,18 +50,6 @@ namespace ColorTools
         {
             get => (double)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
-        }
-
-        public double Minimum
-        {
-            get => (double)GetValue(MinimumProperty);
-            set => SetValue(MinimumProperty, value);
-        }
-
-        public double Maximum
-        {
-            get => (double)GetValue(MaximumProperty);
-            set => SetValue(MaximumProperty, value);
         }
 
         public Orientation Orientation
@@ -174,22 +156,6 @@ namespace ColorTools
             }
         }
 
-        private static void OnMinimumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            if (sender is ColorSlider slider)
-            {
-                slider.OnMinimumChanged();
-            }
-        }
-
-        private static void OnMaximumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            if (sender is ColorSlider slider)
-            {
-                slider.OnMaximumChanged();
-            }
-        }
-
         private void OnValueChanged(double oldValue)
         {
             if (_isValueUpdating)
@@ -219,18 +185,6 @@ namespace ColorTools
             {
                 _isValueUpdating = false;
             }
-        }
-
-        private void OnMinimumChanged()
-        {
-            CoerceMaximum();
-            CoerceValue();
-        }
-
-        private void OnMaximumChanged()
-        {
-            CoerceMinimum();
-            CoerceValue();
         }
 
         private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
@@ -294,31 +248,13 @@ namespace ColorTools
         private void CoerceValue()
         {
             var value = Value;
-            if (value < Minimum)
+            if (value < 0)
             {
-                SetCurrentValue(ValueProperty, Minimum);
+                SetCurrentValue(ValueProperty, 0d);
             }
-            else if (value > Maximum)
+            else if (value > 1)
             {
-                SetCurrentValue(ValueProperty, Maximum);
-            }
-        }
-
-        private void CoerceMinimum()
-        {
-            var maximum = Maximum;
-            if (Minimum > maximum)
-            {
-                SetCurrentValue(MinimumProperty, maximum);
-            }
-        }
-
-        private void CoerceMaximum()
-        {
-            var minimum = Minimum;
-            if (Maximum < minimum)
-            {
-                SetCurrentValue(MaximumProperty, minimum);
+                SetCurrentValue(ValueProperty, 1d);
             }
         }
 
@@ -330,7 +266,7 @@ namespace ColorTools
             }
 
             var isLargeStep = (Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != 0;
-            SetCurrentValue(ValueProperty, Value + sign * (isLargeStep ? 10 : 1));
+            SetCurrentValue(ValueProperty, Value + sign * (isLargeStep ? 0.1 : 0.01));
         }
 
         private void UpdateHandleCurrentPosition()
@@ -351,7 +287,7 @@ namespace ColorTools
                 return;
             }
 
-            SetHandlePosition(ValueToHandlePosition(Value, offset, size, Minimum, Maximum, Orientation == Orientation.Vertical));
+            SetHandlePosition(ValueToHandlePosition(Value, offset, size, Orientation == Orientation.Vertical));
         }
 
         private void UpdateHandleNewPosition(double mousePosition)
@@ -369,7 +305,7 @@ namespace ColorTools
 
             SetHandlePosition(MousePositionToHandlePosition(mousePosition, offset, size));
 
-            SetCurrentValue(ValueProperty, MousePositionToValue(mousePosition, offset, size, Minimum, Maximum, Orientation == Orientation.Vertical));
+            SetCurrentValue(ValueProperty, MousePositionToValue(mousePosition, offset, size, Orientation == Orientation.Vertical));
         }
 
         private (double offset, double size) GetLayoutInfo()
@@ -406,15 +342,11 @@ namespace ColorTools
             }
         }
 
-        private static double ValueToHandlePosition(double value, double offset, double size, double min, double max, bool invert)
+        private static double ValueToHandlePosition(double value, double offset, double size, bool invert)
         {
-            var position = (value - min) / (max - min);
-
-            if (invert)
-            {
-                position = 1 - position;
-            }
-
+            var position = invert
+                ? 1 - value
+                : value;
             return offset + size * position;
         }
 
@@ -431,7 +363,7 @@ namespace ColorTools
             return mousePosition;
         }
 
-        private static double MousePositionToValue(double mousePosition, double offset, double size, double min, double max, bool invert)
+        private static double MousePositionToValue(double mousePosition, double offset, double size, bool invert)
         {
             var value = ((mousePosition - offset) / size) switch
             {
@@ -440,12 +372,9 @@ namespace ColorTools
                 var v => v,
             };
 
-            if (invert)
-            {
-                value = 1 - value;
-            }
-
-            return min + value * (max - min);
+            return invert
+                ? 1 - value
+                : value;
         }
 
         public event RoutedPropertyChangedEventHandler<double> ValueChanged
