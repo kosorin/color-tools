@@ -4,11 +4,16 @@ namespace ColorTools
 {
     public class ColorState : DependencyObject, IColorState
     {
-        public static readonly IColorState Empty = new ColorState(new RgbColor(255, 255, 255));
+        public static readonly IColorState Empty = new ColorState();
 
         public static readonly DependencyProperty SubscribeProperty =
             DependencyProperty.RegisterAttached("Subscribe", typeof(IColorState), typeof(ColorState),
                 new PropertyMetadata(null, OnSubscribePropertyChanged));
+
+        public ColorState()
+        {
+            Update(new RgbColor(255, 255, 255));
+        }
 
         public ColorState(IColor color)
         {
