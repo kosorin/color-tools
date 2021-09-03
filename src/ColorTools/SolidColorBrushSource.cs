@@ -13,7 +13,7 @@ namespace ColorTools
             Value = _brush;
         }
 
-        protected override void Update(IColorState colorState)
+        protected override void Update(ColorState colorState)
         {
             _brush.Color = colorState.Rgb.ToColor();
         }

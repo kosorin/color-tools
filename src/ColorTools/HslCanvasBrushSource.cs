@@ -14,7 +14,7 @@ namespace ColorTools
             Value = CreateBrush(_accentGradientStop);
         }
 
-        protected override void Update(IColorState colorState)
+        protected override void Update(ColorState colorState)
         {
             _accentGradientStop.Color = new HslColor(colorState.Hsl.H, 100, 50).ToColor();
         }

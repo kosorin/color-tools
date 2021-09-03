@@ -24,7 +24,7 @@ namespace ColorTools
         // TODO: Add routed events: SelectedColorChanged, SelectedHexChanged
 
         private static readonly DependencyPropertyKey ColorStatePropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(ColorState), typeof(IColorState), typeof(ColorPicker), new PropertyMetadata(null));
+            DependencyProperty.RegisterReadOnly(nameof(ColorState), typeof(ColorState), typeof(ColorPicker), new PropertyMetadata(null));
 
         public static readonly DependencyProperty ColorStateProperty = ColorStatePropertyKey.DependencyProperty;
 
@@ -83,9 +83,9 @@ namespace ColorTools
             Loaded += OnLoaded;
         }
 
-        public IColorState ColorState
+        public ColorState ColorState
         {
-            get => (IColorState)GetValue(ColorStateProperty);
+            get => (ColorState)GetValue(ColorStateProperty);
             private set => SetValue(ColorStatePropertyKey, value);
         }
 

@@ -14,7 +14,7 @@ namespace ColorTools
             Value = CreateBrush(_accentBrush);
         }
 
-        protected override void Update(IColorState colorState)
+        protected override void Update(ColorState colorState)
         {
             _accentBrush.Color = new HsbColor(colorState.Hsb.H, 100, 100).ToColor();
         }

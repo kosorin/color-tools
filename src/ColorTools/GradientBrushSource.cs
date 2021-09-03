@@ -28,7 +28,7 @@ namespace ColorTools
             set => SetValue(OrientationProperty, value);
         }
 
-        protected override void Update(IColorState colorState)
+        protected override void Update(ColorState colorState)
         {
             var stops = _brush.GradientStops;
             var stopCount = stops.Count;
@@ -40,7 +40,7 @@ namespace ColorTools
             }
         }
 
-        protected abstract Color GetColor(double value, IColorState colorState);
+        protected abstract Color GetColor(double value, ColorState colorState);
 
         private static void OnOrientationPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
@@ -80,7 +80,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return colorState.Rgb.ToColor((byte)(value * 255));
         }
@@ -92,7 +92,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new RgbColor(value * 255, colorState.Rgb.G, colorState.Rgb.B).ToColor();
         }
@@ -104,7 +104,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new RgbColor(colorState.Rgb.R, value * 255, colorState.Rgb.B).ToColor();
         }
@@ -116,7 +116,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new RgbColor(colorState.Rgb.R, colorState.Rgb.G, value * 255).ToColor();
         }
@@ -128,7 +128,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new HsbColor(value * 360, colorState.Hsb.S, colorState.Hsb.B).ToColor();
         }
@@ -140,7 +140,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new HsbColor(colorState.Hsb.H, value * 100, colorState.Hsb.B).ToColor();
         }
@@ -152,7 +152,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new HsbColor(colorState.Hsb.H, colorState.Hsb.S, value * 100).ToColor();
         }
@@ -164,7 +164,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new HslColor(value * 360, colorState.Hsl.S, colorState.Hsl.L).ToColor();
         }
@@ -176,7 +176,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new HslColor(colorState.Hsl.H, value * 100, colorState.Hsl.L).ToColor();
         }
@@ -188,7 +188,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new HslColor(colorState.Hsl.H, colorState.Hsl.S, value * 100).ToColor();
         }
@@ -200,7 +200,7 @@ namespace ColorTools
         {
         }
 
-        protected override Color GetColor(double value, IColorState colorState)
+        protected override Color GetColor(double value, ColorState colorState)
         {
             return new HsbColor(value * 360, 100, 100).ToColor();
         }

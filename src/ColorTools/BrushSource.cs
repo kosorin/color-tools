@@ -31,9 +31,9 @@ namespace ColorTools
             obj.SetValue(BackgroundProperty, value);
         }
 
-        protected abstract void Update(IColorState colorState);
+        protected abstract void Update(ColorState colorState);
 
-        void IColorStateSubscriber.HandleColorStateChanged(IColorState colorState)
+        void IColorStateSubscriber.HandleColorStateChanged(ColorState colorState)
         {
             Update(colorState);
         }

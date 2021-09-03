@@ -1,4 +1,4 @@
 namespace ColorTools
 {
-    public delegate void ColorStateChanged(IColorState colorState);
+    public delegate void ColorStateChanged(ColorState state);
 }

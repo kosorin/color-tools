@@ -2,12 +2,12 @@ using System.Windows;
 
 namespace ColorTools
 {
-    public class ColorState : DependencyObject, IColorState
+    public class ColorState : DependencyObject
     {
-        public static readonly IColorState Empty = new ColorState();
+        public static readonly ColorState Empty = new ColorState();
 
         public static readonly DependencyProperty SubscribeProperty =
-            DependencyProperty.RegisterAttached("Subscribe", typeof(IColorState), typeof(ColorState),
+            DependencyProperty.RegisterAttached("Subscribe", typeof(ColorState), typeof(ColorState),
                 new PropertyMetadata(null, OnSubscribePropertyChanged));
 
         public ColorState()
@@ -35,12 +35,12 @@ namespace ColorTools
             Changed?.Invoke(this);
         }
 
-        public static IColorState? GetSubscribe(DependencyObject obj)
+        public static ColorState? GetSubscribe(DependencyObject obj)
         {
-            return (IColorState?)obj.GetValue(SubscribeProperty);
+            return (ColorState?)obj.GetValue(SubscribeProperty);
         }
 
-        public static void SetSubscribe(DependencyObject obj, IColorState? value)
+        public static void SetSubscribe(DependencyObject obj, ColorState? value)
         {
             obj.SetValue(SubscribeProperty, value);
         }
@@ -49,12 +49,12 @@ namespace ColorTools
         {
             if (sender is IColorStateSubscriber subscriber)
             {
-                if (args.OldValue is IColorState oldColorState)
+                if (args.OldValue is ColorState oldColorState)
                 {
                     oldColorState.Changed -= subscriber.HandleColorStateChanged;
                 }
 
-                if (args.NewValue is IColorState newColorState)
+                if (args.NewValue is ColorState newColorState)
                 {
                     subscriber.HandleColorStateChanged(newColorState);
                     newColorState.Changed += subscriber.HandleColorStateChanged;
