@@ -641,7 +641,7 @@ namespace ColorTools
 
                 if (selectedColor.HasValue)
                 {
-                    if (!AllowAlpha)
+                    if (selectedColor.Value.A != 0xFF && !AllowAlpha)
                     {
                         selectedColor = selectedColor.Value.WithoutAlpha();
                     }
