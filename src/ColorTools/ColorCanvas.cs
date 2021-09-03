@@ -12,7 +12,7 @@ namespace ColorTools
     {
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(Point), typeof(ColorCanvas),
-                new FrameworkPropertyMetadata(new Point(0, 1), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged));
+                new FrameworkPropertyMetadata(new Point(0, 1), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged, OnCoerceValue));
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register(nameof(Header), typeof(object), typeof(ColorCanvas), new PropertyMetadata(null));
@@ -28,7 +28,6 @@ namespace ColorTools
 
         private Canvas? _componentCanvas;
 
-        private bool _isValueUpdating;
         private bool _isDragging;
 
         static ColorCanvas()
@@ -131,32 +130,29 @@ namespace ColorTools
 
         private void OnValueChanged(Point oldValue)
         {
-            if (_isValueUpdating)
+            UpdateHandleCurrentPosition();
+
+            RaiseEvent(new RoutedPropertyChangedEventArgs<Point>(oldValue, Value, ValueChangedEvent));
+        }
+
+        private static object OnCoerceValue(DependencyObject sender, object baseValue)
+        {
+            if (baseValue is not Point value)
             {
-                return;
+                return new Point(0, 0);
             }
 
-            try
+            return new Point(value.X switch
             {
-                _isValueUpdating = true;
-
-                CoerceValue();
-
-                var newValue = Value;
-
-                if (oldValue == newValue)
-                {
-                    return;
-                }
-
-                UpdateHandleCurrentPosition();
-
-                RaiseEvent(new RoutedPropertyChangedEventArgs<Point>(oldValue, newValue, ValueChangedEvent));
-            }
-            finally
+                < 0 => 0,
+                > 1 => 1,
+                var x => x,
+            }, value.Y switch
             {
-                _isValueUpdating = false;
-            }
+                < 0 => 0,
+                > 1 => 1,
+                var y => y,
+            });
         }
 
         private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
@@ -205,39 +201,6 @@ namespace ColorTools
         private void OnComponentCanvasSizeChanged(object sender, SizeChangedEventArgs args)
         {
             UpdateHandleCurrentPosition();
-        }
-
-        private void CoerceValue()
-        {
-            var (x, y) = (Value.X, Value.Y);
-            var coerced = false;
-
-            if (x < 0)
-            {
-                x = 0;
-                coerced = true;
-            }
-            else if (x > 1)
-            {
-                x = 1;
-                coerced = true;
-            }
-
-            if (y < 0)
-            {
-                y = 0;
-                coerced = true;
-            }
-            else if (y > 1)
-            {
-                y = 1;
-                coerced = true;
-            }
-
-            if (coerced)
-            {
-                SetCurrentValue(ValueProperty, new Point(x, y));
-            }
         }
 
         private void UpdateHandleCurrentPosition()

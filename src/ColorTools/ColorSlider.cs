@@ -13,7 +13,7 @@ namespace ColorTools
     {
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(double), typeof(ColorSlider),
-                new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged));
+                new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged, OnCoerceValue));
 
         public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(ColorSlider), new PropertyMetadata(Orientation.Horizontal));
@@ -32,7 +32,6 @@ namespace ColorTools
 
         private Canvas? _componentCanvas;
 
-        private bool _isValueUpdating;
         private bool _isDragging;
 
         static ColorSlider()
@@ -156,35 +155,22 @@ namespace ColorTools
             }
         }
 
+        private static object OnCoerceValue(DependencyObject sender, object baseValue)
+        {
+            return baseValue switch
+            {
+                double and < 0 => 0,
+                double and > 1 => 1,
+                double value => value,
+                _ => 0d,
+            };
+        }
+
         private void OnValueChanged(double oldValue)
         {
-            if (_isValueUpdating)
-            {
-                return;
-            }
+            UpdateHandleCurrentPosition();
 
-            try
-            {
-                _isValueUpdating = true;
-
-                CoerceValue();
-
-                var newValue = Value;
-
-                // ReSharper disable once CompareOfFloatsByEqualityOperator
-                if (oldValue == newValue)
-                {
-                    return;
-                }
-
-                UpdateHandleCurrentPosition();
-
-                RaiseEvent(new RoutedPropertyChangedEventArgs<double>(oldValue, newValue, ValueChangedEvent));
-            }
-            finally
-            {
-                _isValueUpdating = false;
-            }
+            RaiseEvent(new RoutedPropertyChangedEventArgs<double>(oldValue, Value, ValueChangedEvent));
         }
 
         private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
@@ -243,19 +229,6 @@ namespace ColorTools
         private void OnComponentCanvasSizeChanged(object sender, SizeChangedEventArgs args)
         {
             UpdateHandleCurrentPosition();
-        }
-
-        private void CoerceValue()
-        {
-            var value = Value;
-            if (value < 0)
-            {
-                SetCurrentValue(ValueProperty, 0d);
-            }
-            else if (value > 1)
-            {
-                SetCurrentValue(ValueProperty, 1d);
-            }
         }
 
         private void MoveHandle(int sign)
