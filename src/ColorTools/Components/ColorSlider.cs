@@ -4,16 +4,16 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ColorTools
+namespace ColorTools.Components
 {
     [TemplatePart(Name = nameof(ComponentCanvas), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(Handle), Type = typeof(Border))]
     [TemplatePart(Name = nameof(HandleTranslateTransform), Type = typeof(TranslateTransform))]
-    public class ColorSlider : ColorComponent
+    public abstract class ColorSlider : ColorComponent
     {
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(double), typeof(ColorSlider),
-                new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged, OnCoerceValue));
+                new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, OnCoerceValue));
 
         public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(ColorSlider), new PropertyMetadata(Orientation.Horizontal));
@@ -27,9 +27,6 @@ namespace ColorTools
         public static readonly DependencyProperty AlphaBrushProperty =
             DependencyProperty.Register(nameof(AlphaBrush), typeof(Brush), typeof(ColorSlider), new PropertyMetadata(Brushes.Transparent));
 
-        public static readonly RoutedEvent ValueChangedEvent =
-            EventManager.RegisterRoutedEvent(nameof(ValueChanged), RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<double>), typeof(ColorSlider));
-
         private Canvas? _componentCanvas;
 
         private bool _isDragging;
@@ -39,7 +36,7 @@ namespace ColorTools
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ColorSlider), new FrameworkPropertyMetadata(typeof(ColorSlider)));
         }
 
-        public ColorSlider()
+        protected ColorSlider()
         {
             Loaded += OnLoaded;
             IsVisibleChanged += OnIsVisibleChanged;
@@ -106,11 +103,6 @@ namespace ColorTools
 
         private TranslateTransform? HandleTranslateTransform { get; set; }
 
-        public void Update(double value)
-        {
-            SetCurrentValue(ValueProperty, value);
-        }
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -147,11 +139,11 @@ namespace ColorTools
             }
         }
 
-        private static void OnValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            if (sender is ColorSlider slider && args is { OldValue : double oldValue, })
+            if (sender is ColorSlider slider)
             {
-                slider.OnValueChanged(oldValue);
+                slider.OnValueChanged();
             }
         }
 
@@ -166,11 +158,11 @@ namespace ColorTools
             };
         }
 
-        private void OnValueChanged(double oldValue)
+        private void OnValueChanged()
         {
             UpdateHandleCurrentPosition();
 
-            RaiseEvent(new RoutedPropertyChangedEventArgs<double>(oldValue, Value, ValueChangedEvent));
+            TryUpdatePicker();
         }
 
         private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
@@ -348,12 +340,6 @@ namespace ColorTools
             return invert
                 ? 1 - value
                 : value;
-        }
-
-        public event RoutedPropertyChangedEventHandler<double> ValueChanged
-        {
-            add => AddHandler(ValueChangedEvent, value);
-            remove => RemoveHandler(ValueChangedEvent, value);
         }
     }
 }

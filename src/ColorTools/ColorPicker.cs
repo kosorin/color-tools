@@ -4,43 +4,22 @@ using System.Windows.Media;
 
 namespace ColorTools
 {
-    [TemplatePart(Name = nameof(AlphaSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(RgbRedSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(RgbGreenSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(RgbBlueSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HsbHueSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HsbSaturationSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HsbBrightnessSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HslHueSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HslSaturationSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HslLightnessSlider), Type = typeof(ColorSlider))]
-    [TemplatePart(Name = nameof(HsbSaturationBrightnessCanvas), Type = typeof(ColorCanvas))]
-    [TemplatePart(Name = nameof(HsbHueCanvasSlider), Type = typeof(ColorSlider))]
-    public class ColorPicker : Control
+    public class ColorPicker : Control, IColorPicker
     {
-        private static readonly Color DefaultColor = Colors.Red;
-        private static readonly Color DefaultEmptyColor = Colors.White;
+        private static readonly Color InitialColor = Colors.Red;
 
         // TODO: Add routed events: SelectedColorChanged, SelectedHexChanged
 
-        private static readonly DependencyPropertyKey ColorStatePropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(ColorState), typeof(ColorState), typeof(ColorPicker), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty ColorStateProperty = ColorStatePropertyKey.DependencyProperty;
-
-        public static readonly DependencyProperty ColorModelProperty =
-            DependencyProperty.Register(nameof(ColorModel), typeof(ColorModel), typeof(ColorPicker), new PropertyMetadata(ColorModel.Hsl));
+        public static readonly DependencyProperty OriginalColorProperty =
+            DependencyProperty.Register(nameof(OriginalColor), typeof(Color?), typeof(ColorPicker), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedColorProperty =
             DependencyProperty.Register(nameof(SelectedColor), typeof(Color?), typeof(ColorPicker),
-                new FrameworkPropertyMetadata(DefaultColor, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedColorPropertyChanged));
+                new FrameworkPropertyMetadata(InitialColor, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedColorPropertyChanged));
 
         public static readonly DependencyProperty SelectedHexProperty =
             DependencyProperty.Register(nameof(SelectedHex), typeof(string), typeof(ColorPicker),
-                new FrameworkPropertyMetadata(DefaultColor.ToHex(true), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedHexPropertyChanged));
-
-        public static readonly DependencyProperty OriginalColorProperty =
-            DependencyProperty.Register(nameof(OriginalColor), typeof(Color?), typeof(ColorPicker), new PropertyMetadata(null));
+                new FrameworkPropertyMetadata(InitialColor.ToHex(true), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedHexPropertyChanged, OnCoerceSelectedHex));
 
         public static readonly DependencyProperty AllowEmptyProperty =
             DependencyProperty.Register(nameof(AllowEmpty), typeof(bool), typeof(ColorPicker), new PropertyMetadata(true, OnAllowEmptyPropertyChanged));
@@ -54,24 +33,11 @@ namespace ColorTools
         public static readonly DependencyProperty EmptyBrushProperty =
             DependencyProperty.Register(nameof(EmptyBrush), typeof(Brush), typeof(ColorPicker), new PropertyMetadata(Brushes.White));
 
-        private ColorSlider? _alphaSlider;
-        private ColorSlider? _rgbRedSlider;
-        private ColorSlider? _rgbGreenSlider;
-        private ColorSlider? _rgbBlueSlider;
-        private ColorSlider? _hsbHueSlider;
-        private ColorSlider? _hsbSaturationSlider;
-        private ColorSlider? _hsbBrightnessSlider;
-        private ColorSlider? _hslHueSlider;
-        private ColorSlider? _hslSaturationSlider;
-        private ColorSlider? _hslLightnessSlider;
-        private ColorCanvas? _hsbSaturationBrightnessCanvas;
-        private ColorSlider? _hsbHueCanvasSlider;
-
         private bool _isUpdating;
 
-        private bool _isSet = true;
-        private double _alpha = DefaultColor.A;
-        private readonly ColorState _colorState = new ColorState(DefaultColor.ToRgb());
+        private bool _isSet;
+        private double _alpha;
+        private IColor _color;
 
         static ColorPicker()
         {
@@ -80,19 +46,67 @@ namespace ColorTools
 
         public ColorPicker()
         {
+            _isSet = true;
+            _alpha = 1;
+            _color = InitialColor.ToRgb();
+            Rgb = _color.ToRgb();
+            Hsb = _color.ToHsb();
+            Hsl = _color.ToHsl();
+
             Loaded += OnLoaded;
         }
 
-        public ColorState ColorState
+        public bool IsSet
         {
-            get => (ColorState)GetValue(ColorStateProperty);
-            private set => SetValue(ColorStatePropertyKey, value);
+            get => _isSet;
+            set
+            {
+                _isSet = value;
+
+                OnIsSetChanged();
+            }
         }
 
-        public ColorModel ColorModel
+        public double Alpha
         {
-            get => (ColorModel)GetValue(ColorModelProperty);
-            set => SetValue(ColorModelProperty, value);
+            get => _alpha;
+            set
+            {
+                _alpha = value switch
+                {
+                    < 0 => 0,
+                    > 1 => 1,
+                    var a => a,
+                };
+
+                OnAlphaChanged();
+            }
+        }
+
+        public IColor Color
+        {
+            get => _color;
+            set
+            {
+                _color = value;
+                Rgb = _color.ToRgb();
+                Hsb = _color.ToHsb();
+                Hsl = _color.ToHsl();
+
+                OnColorChanged();
+            }
+        }
+
+        public RgbColor Rgb { get; private set; }
+
+        public HsbColor Hsb { get; private set; }
+
+        public HslColor Hsl { get; private set; }
+
+        public Color? OriginalColor
+        {
+            get => (Color?)GetValue(OriginalColorProperty);
+            set => SetValue(OriginalColorProperty, value);
         }
 
         public Color? SelectedColor
@@ -105,12 +119,6 @@ namespace ColorTools
         {
             get => (string)GetValue(SelectedHexProperty);
             set => SetValue(SelectedHexProperty, value);
-        }
-
-        public Color? OriginalColor
-        {
-            get => (Color?)GetValue(OriginalColorProperty);
-            set => SetValue(OriginalColorProperty, value);
         }
 
         public bool AllowEmpty
@@ -137,271 +145,9 @@ namespace ColorTools
             set => SetValue(EmptyBrushProperty, value);
         }
 
-        private ColorSlider? AlphaSlider
-        {
-            get => _alphaSlider;
-            set
-            {
-                if (_alphaSlider != null)
-                {
-                    _alphaSlider.ValueChanged -= OnAlphaChanged;
-                }
-
-                _alphaSlider = value;
-
-                if (_alphaSlider != null)
-                {
-                    _alphaSlider.Update(_alpha);
-                    _alphaSlider.ValueChanged += OnAlphaChanged;
-                }
-            }
-        }
-
-        private ColorSlider? RgbRedSlider
-        {
-            get => _rgbRedSlider;
-            set
-            {
-                if (_rgbRedSlider != null)
-                {
-                    _rgbRedSlider.ValueChanged -= OnRgbRedChanged;
-                }
-
-                _rgbRedSlider = value;
-
-                if (_rgbRedSlider != null)
-                {
-                    _rgbRedSlider.Update(_colorState.Rgb.R);
-                    _rgbRedSlider.ValueChanged += OnRgbRedChanged;
-                }
-            }
-        }
-
-        private ColorSlider? RgbGreenSlider
-        {
-            get => _rgbGreenSlider;
-            set
-            {
-                if (_rgbGreenSlider != null)
-                {
-                    _rgbGreenSlider.ValueChanged -= OnRgbGreenChanged;
-                }
-
-                _rgbGreenSlider = value;
-
-                if (_rgbGreenSlider != null)
-                {
-                    _rgbGreenSlider.Update(_colorState.Rgb.G);
-                    _rgbGreenSlider.ValueChanged += OnRgbGreenChanged;
-                }
-            }
-        }
-
-        private ColorSlider? RgbBlueSlider
-        {
-            get => _rgbBlueSlider;
-            set
-            {
-                if (_rgbBlueSlider != null)
-                {
-                    _rgbBlueSlider.ValueChanged -= OnRgbBlueChanged;
-                }
-
-                _rgbBlueSlider = value;
-
-                if (_rgbBlueSlider != null)
-                {
-                    _rgbBlueSlider.Update(_colorState.Rgb.B);
-                    _rgbBlueSlider.ValueChanged += OnRgbBlueChanged;
-                }
-            }
-        }
-
-        private ColorSlider? HsbHueSlider
-        {
-            get => _hsbHueSlider;
-            set
-            {
-                if (_hsbHueSlider != null)
-                {
-                    _hsbHueSlider.ValueChanged -= OnHsbHueChanged;
-                }
-
-                _hsbHueSlider = value;
-
-                if (_hsbHueSlider != null)
-                {
-                    _hsbHueSlider.Update(_colorState.Hsb.H);
-                    _hsbHueSlider.ValueChanged += OnHsbHueChanged;
-                }
-            }
-        }
-
-        private ColorSlider? HsbSaturationSlider
-        {
-            get => _hsbSaturationSlider;
-            set
-            {
-                if (_hsbSaturationSlider != null)
-                {
-                    _hsbSaturationSlider.ValueChanged -= OnHsbSaturationChanged;
-                }
-
-                _hsbSaturationSlider = value;
-
-                if (_hsbSaturationSlider != null)
-                {
-                    _hsbSaturationSlider.Update(_colorState.Hsb.S);
-                    _hsbSaturationSlider.ValueChanged += OnHsbSaturationChanged;
-                }
-            }
-        }
-
-        private ColorSlider? HsbBrightnessSlider
-        {
-            get => _hsbBrightnessSlider;
-            set
-            {
-                if (_hsbBrightnessSlider != null)
-                {
-                    _hsbBrightnessSlider.ValueChanged -= OnHsbBrightnessChanged;
-                }
-
-                _hsbBrightnessSlider = value;
-
-                if (_hsbBrightnessSlider != null)
-                {
-                    _hsbBrightnessSlider.Update(_colorState.Hsb.B);
-                    _hsbBrightnessSlider.ValueChanged += OnHsbBrightnessChanged;
-                }
-            }
-        }
-
-        private ColorSlider? HslHueSlider
-        {
-            get => _hslHueSlider;
-            set
-            {
-                if (_hslHueSlider != null)
-                {
-                    _hslHueSlider.ValueChanged -= OnHslHueChanged;
-                }
-
-                _hslHueSlider = value;
-
-                if (_hslHueSlider != null)
-                {
-                    _hslHueSlider.Update(_colorState.Hsl.H);
-                    _hslHueSlider.ValueChanged += OnHslHueChanged;
-                }
-            }
-        }
-
-        private ColorSlider? HslSaturationSlider
-        {
-            get => _hslSaturationSlider;
-            set
-            {
-                if (_hslSaturationSlider != null)
-                {
-                    _hslSaturationSlider.ValueChanged -= OnHslSaturationChanged;
-                }
-
-                _hslSaturationSlider = value;
-
-                if (_hslSaturationSlider != null)
-                {
-                    _hslSaturationSlider.Update(_colorState.Hsl.S);
-                    _hslSaturationSlider.ValueChanged += OnHslSaturationChanged;
-                }
-            }
-        }
-
-        private ColorSlider? HslLightnessSlider
-        {
-            get => _hslLightnessSlider;
-            set
-            {
-                if (_hslLightnessSlider != null)
-                {
-                    _hslLightnessSlider.ValueChanged -= OnHslLightnessChanged;
-                }
-
-                _hslLightnessSlider = value;
-
-                if (_hslLightnessSlider != null)
-                {
-                    _hslLightnessSlider.Update(_colorState.Hsl.L);
-                    _hslLightnessSlider.ValueChanged += OnHslLightnessChanged;
-                }
-            }
-        }
-
-        private ColorCanvas? HsbSaturationBrightnessCanvas
-        {
-            get => _hsbSaturationBrightnessCanvas;
-            set
-            {
-                if (_hsbSaturationBrightnessCanvas != null)
-                {
-                    _hsbSaturationBrightnessCanvas.ValueChanged -= OnHsbSaturationBrightnessChanged;
-                }
-
-                _hsbSaturationBrightnessCanvas = value;
-
-                if (_hsbSaturationBrightnessCanvas != null)
-                {
-                    _hsbSaturationBrightnessCanvas.Update(new Point(_colorState.Hsb.S * 0.01, _colorState.Hsb.B * 0.01));
-                    _hsbSaturationBrightnessCanvas.ValueChanged += OnHsbSaturationBrightnessChanged;
-                }
-            }
-        }
-
-        private ColorSlider? HsbHueCanvasSlider
-        {
-            get => _hsbHueCanvasSlider;
-            set
-            {
-                if (_hsbHueCanvasSlider != null)
-                {
-                    _hsbHueCanvasSlider.ValueChanged -= OnHsbHueChanged;
-                }
-
-                _hsbHueCanvasSlider = value;
-
-                if (_hsbHueCanvasSlider != null)
-                {
-                    _hsbHueCanvasSlider.Update(_colorState.Hsb.H);
-                    _hsbHueCanvasSlider.ValueChanged += OnHsbHueChanged;
-                }
-            }
-        }
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            AlphaSlider = GetTemplateChild(nameof(AlphaSlider)) as ColorSlider;
-
-            RgbRedSlider = GetTemplateChild(nameof(RgbRedSlider)) as ColorSlider;
-            RgbGreenSlider = GetTemplateChild(nameof(RgbGreenSlider)) as ColorSlider;
-            RgbBlueSlider = GetTemplateChild(nameof(RgbBlueSlider)) as ColorSlider;
-            HsbHueSlider = GetTemplateChild(nameof(HsbHueSlider)) as ColorSlider;
-            HsbSaturationSlider = GetTemplateChild(nameof(HsbSaturationSlider)) as ColorSlider;
-            HsbBrightnessSlider = GetTemplateChild(nameof(HsbBrightnessSlider)) as ColorSlider;
-            HslHueSlider = GetTemplateChild(nameof(HslHueSlider)) as ColorSlider;
-            HslSaturationSlider = GetTemplateChild(nameof(HslSaturationSlider)) as ColorSlider;
-            HslLightnessSlider = GetTemplateChild(nameof(HslLightnessSlider)) as ColorSlider;
-
-            HsbSaturationBrightnessCanvas = GetTemplateChild(nameof(HsbSaturationBrightnessCanvas)) as ColorCanvas;
-            HsbHueCanvasSlider = GetTemplateChild(nameof(HsbHueCanvasSlider)) as ColorSlider;
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             ReplaceSelectedColor(SelectedColor);
-
-            ColorState = _colorState;
         }
 
         private static void OnSelectedColorPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -420,6 +166,16 @@ namespace ColorTools
             }
         }
 
+        private static object OnCoerceSelectedHex(DependencyObject d, object baseValue)
+        {
+            // Ensure SelectedHex is not null
+            return baseValue switch
+            {
+                string hex => hex,
+                _ => string.Empty,
+            };
+        }
+
         private static void OnAllowEmptyPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             if (sender is ColorPicker colorPicker)
@@ -434,6 +190,42 @@ namespace ColorTools
             {
                 colorPicker.OnAllowAlphaChanged();
             }
+        }
+
+        private void OnIsSetChanged()
+        {
+            IsSetChanged?.Invoke(this, IsSet);
+
+            if (_isUpdating)
+            {
+                return;
+            }
+
+            UpdateSelectedColor(false);
+        }
+
+        private void OnAlphaChanged()
+        {
+            AlphaChanged?.Invoke(this, Alpha);
+
+            if (_isUpdating)
+            {
+                return;
+            }
+
+            UpdateSelectedColor();
+        }
+
+        private void OnColorChanged()
+        {
+            ColorChanged?.Invoke(this, Color);
+
+            if (_isUpdating)
+            {
+                return;
+            }
+
+            UpdateSelectedColor();
         }
 
         private void OnSelectedColorChanged()
@@ -463,13 +255,7 @@ namespace ColorTools
                 return;
             }
 
-            if (!_isSet && !AllowEmpty)
-            {
-                _colorState.Update(DefaultEmptyColor.ToRgb());
-            }
-
             UpdateSelectedColor();
-            UpdateComponents();
         }
 
         private void OnAllowAlphaChanged()
@@ -479,154 +265,12 @@ namespace ColorTools
                 return;
             }
 
-            if (!_isSet)
+            if (!IsSet)
             {
                 return;
             }
 
             UpdateSelectedColor();
-        }
-
-        private void OnAlphaChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _alpha = args.NewValue;
-
-            UpdateSelectedColor();
-        }
-
-        private void OnRgbRedChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new RgbColor(args.NewValue * 255, _colorState.Rgb.G, _colorState.Rgb.B));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnRgbGreenChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new RgbColor(_colorState.Rgb.R, args.NewValue * 255, _colorState.Rgb.B));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnRgbBlueChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new RgbColor(_colorState.Rgb.R, _colorState.Rgb.G, args.NewValue * 255));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnHsbHueChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new HsbColor(args.NewValue * 360, _colorState.Hsb.S, _colorState.Hsb.B));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnHsbSaturationChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new HsbColor(_colorState.Hsb.H, args.NewValue * 100, _colorState.Hsb.B));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnHsbBrightnessChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new HsbColor(_colorState.Hsb.H, _colorState.Hsb.S, args.NewValue * 100));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnHslHueChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new HslColor(args.NewValue * 360, _colorState.Hsl.S, _colorState.Hsl.L));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnHslSaturationChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new HslColor(_colorState.Hsl.H, args.NewValue * 100, _colorState.Hsl.L));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnHslLightnessChanged(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new HslColor(_colorState.Hsl.H, _colorState.Hsl.S, args.NewValue * 100));
-
-            UpdateSelectedColor();
-            UpdateComponents();
-        }
-
-        private void OnHsbSaturationBrightnessChanged(object sender, RoutedPropertyChangedEventArgs<Point> args)
-        {
-            if (_isUpdating)
-            {
-                return;
-            }
-
-            _colorState.Update(new HsbColor(_colorState.Hsb.H, args.NewValue.X * 100, args.NewValue.Y * 100));
-
-            UpdateSelectedColor();
-            UpdateComponents();
         }
 
         private void ReplaceSelectedColor(Color? selectedColor)
@@ -636,28 +280,26 @@ namespace ColorTools
             {
                 if (!selectedColor.HasValue && !AllowEmpty)
                 {
-                    selectedColor = DefaultEmptyColor;
+                    selectedColor = Color.ToColor(AllowAlpha ? Alpha : 1);
                 }
 
                 if (selectedColor.HasValue)
                 {
-                    if (selectedColor.Value.A != 0xFF && !AllowAlpha)
+                    if (selectedColor.Value.A != 255 && !AllowAlpha)
                     {
                         selectedColor = selectedColor.Value.WithoutAlpha();
                     }
 
-                    _alpha = selectedColor.Value.A;
-                    _colorState.Update(selectedColor.Value.ToRgb());
+                    IsSet = true;
+                    Alpha = selectedColor.Value.A / 255d;
+                    Color = selectedColor.Value.ToRgb();
 
-                    _isSet = true;
                     SetCurrentValue(SelectedColorProperty, selectedColor.Value);
                     SetCurrentValue(SelectedHexProperty, selectedColor.Value.ToHex(AllowAlpha));
-
-                    UpdateComponents();
                 }
                 else
                 {
-                    _isSet = false;
+                    IsSet = false;
                     SetCurrentValue(SelectedColorProperty, null);
                     SetCurrentValue(SelectedHexProperty, string.Empty);
                 }
@@ -668,16 +310,28 @@ namespace ColorTools
             }
         }
 
-        private void UpdateSelectedColor()
+        private void UpdateSelectedColor(bool reset = true)
         {
             _isUpdating = true;
             try
             {
-                var selectedColor = _colorState.Rgb.ToColor(AllowAlpha ? (byte)_alpha : (byte)0xFF);
+                if (reset)
+                {
+                    IsSet = true;
+                }
 
-                _isSet = true;
-                SetCurrentValue(SelectedColorProperty, selectedColor);
-                SetCurrentValue(SelectedHexProperty, selectedColor.ToHex(AllowAlpha));
+                if (IsSet)
+                {
+                    var selectedColor = Color.ToColor(AllowAlpha ? Alpha : 1);
+
+                    SetCurrentValue(SelectedColorProperty, selectedColor);
+                    SetCurrentValue(SelectedHexProperty, selectedColor.ToHex(AllowAlpha));
+                }
+                else
+                {
+                    SetCurrentValue(SelectedColorProperty, null);
+                    SetCurrentValue(SelectedHexProperty, string.Empty);
+                }
             }
             finally
             {
@@ -685,30 +339,10 @@ namespace ColorTools
             }
         }
 
-        private void UpdateComponents()
-        {
-            _isUpdating = true;
-            try
-            {
-                AlphaSlider?.Update(_alpha);
+        public event IsSetChanged? IsSetChanged;
 
-                RgbRedSlider?.Update(_colorState.Rgb.R / 255);
-                RgbGreenSlider?.Update(_colorState.Rgb.G / 255);
-                RgbBlueSlider?.Update(_colorState.Rgb.B / 255);
-                HsbHueSlider?.Update(_colorState.Hsb.H / 360);
-                HsbSaturationSlider?.Update(_colorState.Hsb.S / 100);
-                HsbBrightnessSlider?.Update(_colorState.Hsb.B / 100);
-                HslHueSlider?.Update(_colorState.Hsl.H / 360);
-                HslSaturationSlider?.Update(_colorState.Hsl.S / 100);
-                HslLightnessSlider?.Update(_colorState.Hsl.L / 100);
+        public event AlphaChanged? AlphaChanged;
 
-                HsbSaturationBrightnessCanvas?.Update(new Point(_colorState.Hsb.S / 100, _colorState.Hsb.B / 100));
-                HsbHueCanvasSlider?.Update(_colorState.Hsb.H / 360);
-            }
-            finally
-            {
-                _isUpdating = false;
-            }
-        }
+        public event ColorChanged? ColorChanged;
     }
 }

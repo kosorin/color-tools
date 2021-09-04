@@ -3,16 +3,16 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ColorTools
+namespace ColorTools.Components
 {
     [TemplatePart(Name = nameof(ComponentCanvas), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(Handle), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(HandleTranslateTransform), Type = typeof(TranslateTransform))]
-    public class ColorCanvas : ColorComponent
+    public abstract class ColorCanvas : ColorComponent
     {
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(Point), typeof(ColorCanvas),
-                new FrameworkPropertyMetadata(new Point(0, 1), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged, OnCoerceValue));
+                new FrameworkPropertyMetadata(new Point(0, 1), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, OnCoerceValue));
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register(nameof(Header), typeof(object), typeof(ColorCanvas), new PropertyMetadata(null));
@@ -23,9 +23,6 @@ namespace ColorTools
         public static readonly DependencyProperty AlphaBrushProperty =
             DependencyProperty.Register(nameof(AlphaBrush), typeof(Brush), typeof(ColorCanvas), new PropertyMetadata(Brushes.Transparent));
 
-        public static readonly RoutedEvent ValueChangedEvent =
-            EventManager.RegisterRoutedEvent(nameof(ValueChanged), RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<Point>), typeof(ColorCanvas));
-
         private Canvas? _componentCanvas;
 
         private bool _isDragging;
@@ -35,7 +32,7 @@ namespace ColorTools
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ColorCanvas), new FrameworkPropertyMetadata(typeof(ColorCanvas)));
         }
 
-        public ColorCanvas()
+        protected ColorCanvas()
         {
             Loaded += OnLoaded;
             IsVisibleChanged += OnIsVisibleChanged;
@@ -94,11 +91,6 @@ namespace ColorTools
 
         private TranslateTransform? HandleTranslateTransform { get; set; }
 
-        public void Update(Point value)
-        {
-            Value = value;
-        }
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -120,19 +112,12 @@ namespace ColorTools
             UpdateHandleCurrentPosition();
         }
 
-        private static void OnValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            if (sender is ColorCanvas canvas && args is { OldValue : Point oldValue, })
+            if (sender is ColorCanvas canvas)
             {
-                canvas.OnValueChanged(oldValue);
+                canvas.OnValueChanged();
             }
-        }
-
-        private void OnValueChanged(Point oldValue)
-        {
-            UpdateHandleCurrentPosition();
-
-            RaiseEvent(new RoutedPropertyChangedEventArgs<Point>(oldValue, Value, ValueChangedEvent));
         }
 
         private static object OnCoerceValue(DependencyObject sender, object baseValue)
@@ -153,6 +138,13 @@ namespace ColorTools
                 > 1 => 1,
                 var y => y,
             });
+        }
+
+        private void OnValueChanged()
+        {
+            UpdateHandleCurrentPosition();
+
+            TryUpdatePicker();
         }
 
         private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
@@ -291,12 +283,6 @@ namespace ColorTools
         private static Point HandlePositionToValue(Point handlePosition, Point offset, Size size)
         {
             return new Point((handlePosition.X + offset.X) / size.Width, 1 - (handlePosition.Y + offset.Y) / size.Height);
-        }
-
-        public event RoutedPropertyChangedEventHandler<Point> ValueChanged
-        {
-            add => AddHandler(ValueChangedEvent, value);
-            remove => RemoveHandler(ValueChangedEvent, value);
         }
     }
 }

@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace ColorTools
+namespace ColorTools.BrushSources
 {
     public abstract class BrushSource : FrameworkElement
     {
@@ -11,10 +11,10 @@ namespace ColorTools
             DependencyProperty.RegisterReadOnly(nameof(Value), typeof(Brush), typeof(BrushSource), new PropertyMetadata(new SolidColorBrush(DefaultColor)));
 
         public static readonly DependencyProperty ValueProperty = ValuePropertyKey.DependencyProperty;
-        
-        public static readonly DependencyProperty StateProperty =
-            DependencyProperty.Register(nameof(State), typeof(ColorState), typeof(BrushSource),
-                new PropertyMetadata(new ColorState(), OnStatePropertyChanged));
+
+        public static readonly DependencyProperty PickerProperty =
+            DependencyProperty.Register(nameof(Picker), typeof(IColorPicker), typeof(BrushSource),
+                new PropertyMetadata(null, OnPickerPropertyChanged));
 
         public static readonly DependencyProperty BackgroundProperty =
             DependencyProperty.RegisterAttached("Background", typeof(BrushSource), typeof(BrushSource), new PropertyMetadata(null));
@@ -24,11 +24,11 @@ namespace ColorTools
             get => (Brush)GetValue(ValueProperty);
             protected set => SetValue(ValuePropertyKey, value);
         }
-        
-        public ColorState State
+
+        public IColorPicker? Picker
         {
-            get => (ColorState)GetValue(StateProperty);
-            set => SetValue(StateProperty, value);
+            get => (IColorPicker?)GetValue(PickerProperty);
+            set => SetValue(PickerProperty, value);
         }
 
         public static BrushSource GetBackground(DependencyObject obj)
@@ -41,23 +41,24 @@ namespace ColorTools
             obj.SetValue(BackgroundProperty, value);
         }
 
-        private static void OnStatePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private static void OnPickerPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             if (sender is BrushSource brushSource)
             {
-                if (args.OldValue is ColorState oldState)
+                if (args.OldValue is IColorPicker oldPicker)
                 {
-                    oldState.Changed -= brushSource.OnStateChanged;
+                    oldPicker.ColorChanged -= brushSource.OnColorChanged;
                 }
 
-                if (args.NewValue is ColorState newState)
+                if (args.NewValue is IColorPicker newPicker)
                 {
-                    brushSource.OnStateChanged(newState);
-                    newState.Changed += brushSource.OnStateChanged;
+                    brushSource.OnColorChanged(newPicker, newPicker.Color);
+
+                    newPicker.ColorChanged += brushSource.OnColorChanged;
                 }
             }
         }
 
-        protected abstract void OnStateChanged(ColorState state);
+        protected abstract void OnColorChanged(IColorPicker picker, IColor color);
     }
 }

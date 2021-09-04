@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace ColorTools
+namespace ColorTools.BrushSources
 {
     public class HsbCanvasBrushSource : BrushSource
     {
@@ -14,9 +14,9 @@ namespace ColorTools
             Value = CreateBrush(_accentBrush);
         }
 
-        protected override void OnStateChanged(ColorState state)
+        protected override void OnColorChanged(IColorPicker picker, IColor color)
         {
-            _accentBrush.Color = new HsbColor(state.Hsb.H, 100, 100).ToColor();
+            _accentBrush.Color = new HsbColor(picker.Hsb.H, 100, 100).ToColor();
         }
 
         private static DrawingBrush CreateBrush(Brush accentBrush)

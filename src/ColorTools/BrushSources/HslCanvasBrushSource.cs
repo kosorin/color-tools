@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace ColorTools
+namespace ColorTools.BrushSources
 {
     public class HslCanvasBrushSource : BrushSource
     {
@@ -14,9 +14,9 @@ namespace ColorTools
             Value = CreateBrush(_accentGradientStop);
         }
 
-        protected override void OnStateChanged(ColorState state)
+        protected override void OnColorChanged(IColorPicker picker, IColor color)
         {
-            _accentGradientStop.Color = new HslColor(state.Hsl.H, 100, 50).ToColor();
+            _accentGradientStop.Color = new HslColor(picker.Hsl.H, 100, 50).ToColor();
         }
 
         private static DrawingBrush CreateBrush(GradientStop accentGradientStop)

@@ -46,9 +46,9 @@ namespace ColorTools
             return Color.FromRgb((byte)R, (byte)G, (byte)B);
         }
 
-        public Color ToColor(byte alpha)
+        public Color ToColor(double alpha)
         {
-            return Color.FromArgb(alpha, (byte)R, (byte)G, (byte)B);
+            return Color.FromArgb((byte)(alpha * 255), (byte)R, (byte)G, (byte)B);
         }
 
         public RgbColor ToRgb()

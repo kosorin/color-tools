@@ -6,7 +6,7 @@ namespace ColorTools
     {
         Color ToColor();
 
-        Color ToColor(byte alpha);
+        Color ToColor(double alpha);
 
         RgbColor ToRgb();
 

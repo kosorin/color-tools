@@ -49,7 +49,7 @@ namespace ColorTools
             return ToRgb().ToColor();
         }
 
-        public Color ToColor(byte alpha)
+        public Color ToColor(double alpha)
         {
             return ToRgb().ToColor(alpha);
         }

@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace ColorTools
+namespace ColorTools.BrushSources
 {
     public class SolidColorBrushSource : BrushSource
     {
@@ -13,9 +13,9 @@ namespace ColorTools
             Value = _brush;
         }
 
-        protected override void OnStateChanged(ColorState state)
+        protected override void OnColorChanged(IColorPicker picker, IColor color)
         {
-            _brush.Color = state.Rgb.ToColor();
+            _brush.Color = color.ToColor();
         }
     }
 }

@@ -53,7 +53,7 @@ namespace ColorTools
                     data = data[2..];
                     break;
                 default:
-                    a = 0xFF;
+                    a = 255;
                     break;
             }
 
