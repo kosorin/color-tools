@@ -2,9 +2,9 @@ namespace ColorTools.Components
 {
     public class RgbGreenSlider : ColorSlider
     {
-        protected override void OnColorChanged(IColorPicker picker, IColor color)
+        protected override void OnPickerChanged(IColorPicker picker, ColorPickerParts parts)
         {
-            base.OnColorChanged(picker, color);
+            base.OnPickerChanged(picker, parts);
 
             SetCurrentValue(ValueProperty, picker.Rgb.G / 255);
         }

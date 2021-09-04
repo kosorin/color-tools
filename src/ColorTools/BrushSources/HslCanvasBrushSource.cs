@@ -14,7 +14,7 @@ namespace ColorTools.BrushSources
             Value = CreateBrush(_accentGradientStop);
         }
 
-        protected override void OnColorChanged(IColorPicker picker, IColor color)
+        protected override void OnPickerChanged(IColorPicker picker, ColorPickerParts parts)
         {
             _accentGradientStop.Color = new HslColor(picker.Hsl.H, 100, 50).ToColor();
         }

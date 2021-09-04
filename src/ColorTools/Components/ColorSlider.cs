@@ -172,6 +172,8 @@ namespace ColorTools.Components
                 return;
             }
 
+            Picker?.BeginUpdate();
+
             UpdateHandleNewPosition(GetMousePosition(args.GetPosition(ComponentCanvas)));
 
             _isDragging = true;
@@ -185,6 +187,8 @@ namespace ColorTools.Components
             {
                 return;
             }
+
+            Picker?.EndUpdate();
 
             _isDragging = false;
             ComponentCanvas.ReleaseMouseCapture();
@@ -230,7 +234,7 @@ namespace ColorTools.Components
                 return;
             }
 
-            var isLargeStep = (Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != 0;
+            var isLargeStep = (Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None;
             SetCurrentValue(ValueProperty, Value + sign * (isLargeStep ? 0.1 : 0.01));
         }
 

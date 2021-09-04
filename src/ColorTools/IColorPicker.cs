@@ -8,10 +8,10 @@ namespace ColorTools
 
         IColor Color { get; set; }
 
-        event IsSetChanged? IsSetChanged;
+        void BeginUpdate();
 
-        event AlphaChanged? AlphaChanged;
+        void EndUpdate();
 
-        event ColorChanged? ColorChanged;
+        event ColorPickerChanged? Changed;
     }
 }

@@ -11,6 +11,8 @@ namespace ColorTools.Components
 
         private bool _isUpdating;
 
+        protected virtual ColorPickerParts PickerParts => ColorPickerParts.Color;
+
         public IColorPicker? Picker
         {
             get => (IColorPicker?)GetValue(PickerProperty);
@@ -23,42 +25,26 @@ namespace ColorTools.Components
             {
                 if (args.OldValue is IColorPicker oldPicker)
                 {
-                    oldPicker.AlphaChanged -= component.OnAlphaChangedWrapper;
-                    oldPicker.ColorChanged -= component.OnColorChangedWrapper;
+                    oldPicker.EndUpdate();
+                    oldPicker.Changed -= component.OnPickerChangedCore;
                 }
 
                 if (args.NewValue is IColorPicker newPicker)
                 {
-                    component.OnAlphaChangedWrapper(newPicker, newPicker.Alpha);
-                    component.OnColorChangedWrapper(newPicker, newPicker.Color);
-
-                    newPicker.AlphaChanged += component.OnAlphaChangedWrapper;
-                    newPicker.ColorChanged += component.OnColorChangedWrapper;
+                    component.OnPickerChangedCore(newPicker, ColorPickerParts.All);
+                    newPicker.Changed += component.OnPickerChangedCore;
                 }
             }
         }
 
-        private void OnAlphaChangedWrapper(IColorPicker picker, double alpha)
+        private void OnPickerChangedCore(IColorPicker picker, ColorPickerParts parts)
         {
             if (_isUpdating)
             {
                 return;
             }
 
-            _isUpdating = false;
-            try
-            {
-                OnAlphaChanged(picker, alpha);
-            }
-            finally
-            {
-                _isUpdating = false;
-            }
-        }
-
-        private void OnColorChangedWrapper(IColorPicker picker, IColor color)
-        {
-            if (_isUpdating)
+            if ((parts & PickerParts) == ColorPickerParts.None)
             {
                 return;
             }
@@ -66,7 +52,7 @@ namespace ColorTools.Components
             _isUpdating = true;
             try
             {
-                OnColorChanged(picker, color);
+                OnPickerChanged(picker, parts);
             }
             finally
             {
@@ -74,11 +60,7 @@ namespace ColorTools.Components
             }
         }
 
-        protected virtual void OnAlphaChanged(IColorPicker picker, double alpha)
-        {
-        }
-
-        protected virtual void OnColorChanged(IColorPicker picker, IColor color)
+        protected virtual void OnPickerChanged(IColorPicker picker, ColorPickerParts parts)
         {
         }
 

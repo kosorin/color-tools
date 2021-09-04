@@ -14,7 +14,7 @@ namespace ColorTools.BrushSources
             Value = CreateBrush(_accentBrush);
         }
 
-        protected override void OnColorChanged(IColorPicker picker, IColor color)
+        protected override void OnPickerChanged(IColorPicker picker, ColorPickerParts parts)
         {
             _accentBrush.Color = new HsbColor(picker.Hsb.H, 100, 100).ToColor();
         }

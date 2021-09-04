@@ -154,6 +154,8 @@ namespace ColorTools.Components
                 return;
             }
 
+            Picker?.BeginUpdate();
+
             UpdateHandleNewPosition(args.GetPosition(ComponentCanvas));
 
             _isDragging = true;
@@ -167,6 +169,8 @@ namespace ColorTools.Components
             {
                 return;
             }
+
+            Picker?.EndUpdate();
 
             _isDragging = false;
             ComponentCanvas.ReleaseMouseCapture();

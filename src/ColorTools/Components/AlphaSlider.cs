@@ -2,11 +2,13 @@ namespace ColorTools.Components
 {
     public class AlphaSlider : ColorSlider
     {
-        protected override void OnAlphaChanged(IColorPicker picker, double alpha)
-        {
-            base.OnAlphaChanged(picker, alpha);
+        protected override ColorPickerParts PickerParts => ColorPickerParts.Alpha;
 
-            SetCurrentValue(ValueProperty, alpha);
+        protected override void OnPickerChanged(IColorPicker picker, ColorPickerParts parts)
+        {
+            base.OnPickerChanged(picker, parts);
+
+            SetCurrentValue(ValueProperty, picker.Alpha);
         }
 
         protected override void UpdatePicker(IColorPicker picker)

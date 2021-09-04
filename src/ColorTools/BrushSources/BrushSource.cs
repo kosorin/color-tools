@@ -19,6 +19,8 @@ namespace ColorTools.BrushSources
         public static readonly DependencyProperty BackgroundProperty =
             DependencyProperty.RegisterAttached("Background", typeof(BrushSource), typeof(BrushSource), new PropertyMetadata(null));
 
+        protected virtual ColorPickerParts PickerParts => ColorPickerParts.Color;
+
         public Brush Value
         {
             get => (Brush)GetValue(ValueProperty);
@@ -36,7 +38,7 @@ namespace ColorTools.BrushSources
             return (BrushSource)obj.GetValue(BackgroundProperty);
         }
 
-        public static void SetBackground(DependencyObject obj, BrushSource? value)
+        public static void SetBackground(DependencyObject obj, BrushSource value)
         {
             obj.SetValue(BackgroundProperty, value);
         }
@@ -47,18 +49,27 @@ namespace ColorTools.BrushSources
             {
                 if (args.OldValue is IColorPicker oldPicker)
                 {
-                    oldPicker.ColorChanged -= brushSource.OnColorChanged;
+                    oldPicker.Changed -= brushSource.OnPickerChangedCore;
                 }
 
                 if (args.NewValue is IColorPicker newPicker)
                 {
-                    brushSource.OnColorChanged(newPicker, newPicker.Color);
-
-                    newPicker.ColorChanged += brushSource.OnColorChanged;
+                    brushSource.OnPickerChangedCore(newPicker, ColorPickerParts.All);
+                    newPicker.Changed += brushSource.OnPickerChangedCore;
                 }
             }
         }
 
-        protected abstract void OnColorChanged(IColorPicker picker, IColor color);
+        private void OnPickerChangedCore(IColorPicker picker, ColorPickerParts parts)
+        {
+            if ((parts & PickerParts) == ColorPickerParts.None)
+            {
+                return;
+            }
+
+            OnPickerChanged(picker, parts);
+        }
+
+        protected abstract void OnPickerChanged(IColorPicker picker, ColorPickerParts parts);
     }
 }

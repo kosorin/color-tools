@@ -4,9 +4,9 @@ namespace ColorTools.Components
 {
     public class HsbSaturationBrightnessCanvas : ColorCanvas
     {
-        protected override void OnColorChanged(IColorPicker picker, IColor color)
+        protected override void OnPickerChanged(IColorPicker picker, ColorPickerParts parts)
         {
-            base.OnColorChanged(picker, color);
+            base.OnPickerChanged(picker, parts);
 
             SetCurrentValue(ValueProperty, new Point(picker.Hsb.S / 100, picker.Hsb.B / 100));
         }

@@ -28,7 +28,7 @@ namespace ColorTools.BrushSources
             set => SetValue(OrientationProperty, value);
         }
 
-        protected override void OnColorChanged(IColorPicker picker, IColor color)
+        protected override void OnPickerChanged(IColorPicker picker, ColorPickerParts parts)
         {
             var stops = _brush.GradientStops;
             var stopCount = stops.Count;

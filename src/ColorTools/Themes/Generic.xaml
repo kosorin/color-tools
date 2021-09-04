@@ -245,9 +245,13 @@
                                             </Border>
                                             <Border x:Name="SelectedColorPreviewBorder"
                                                     Height="80"
+                                                    Tag="asd"
                                                     ToolTip="New color">
+                                                <brushSources:BrushSource.Background>
+                                                    <brushSources:SelectedColorBrushSource EmptyBrush="{Binding EmptyBrush, RelativeSource={RelativeSource TemplatedParent}}" Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
+                                                </brushSources:BrushSource.Background>
                                                 <Border.Background>
-                                                    <SolidColorBrush Color="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NullableColorToColorConverter}}" />
+                                                    <Binding Path="(brushSources:BrushSource.Background).Value" RelativeSource="{RelativeSource Self}" />
                                                 </Border.Background>
                                             </Border>
                                         </StackPanel>
@@ -261,9 +265,6 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="OriginalColor" Value="{x:Null}">
                             <Setter TargetName="OriginalColorPreviewBorder" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="SelectedColor" Value="{x:Null}">
-                            <Setter TargetName="SelectedColorPreviewBorder" Property="Background" Value="{Binding EmptyBrush, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
                         <Trigger Property="AllowAlpha" Value="False">
                             <Setter TargetName="AlphaSlider" Property="Visibility" Value="Collapsed" />
