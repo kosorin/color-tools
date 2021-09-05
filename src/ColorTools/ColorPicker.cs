@@ -161,6 +161,39 @@ namespace ColorTools
             set => SetValue(EmptyBrushProperty, value);
         }
 
+        public void ReplaceSelectedColor(Color? newColor)
+        {
+            _isUpdating = true;
+            try
+            {
+                _isBulkChange = true;
+                try
+                {
+                    if (newColor.HasValue)
+                    {
+                        IsSet = true;
+                        Alpha = newColor.Value.A / 255d;
+                        Color = newColor.Value.ToRgb();
+                    }
+                    else
+                    {
+                        IsSet = false;
+                    }
+                }
+                finally
+                {
+                    _isBulkChange = false;
+                }
+                Changed?.Invoke(this, ColorPickerParts.All);
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
+
+            UpdateSelectedColor(false);
+        }
+
         public void BeginUpdate()
         {
             _isSuspended = true;
@@ -312,39 +345,6 @@ namespace ColorTools
             }
 
             UpdateSelectedColor();
-        }
-
-        private void ReplaceSelectedColor(Color? newColor)
-        {
-            _isUpdating = true;
-            try
-            {
-                _isBulkChange = true;
-                try
-                {
-                    if (newColor.HasValue)
-                    {
-                        IsSet = true;
-                        Alpha = newColor.Value.A / 255d;
-                        Color = newColor.Value.ToRgb();
-                    }
-                    else
-                    {
-                        IsSet = false;
-                    }
-                }
-                finally
-                {
-                    _isBulkChange = false;
-                }
-                Changed?.Invoke(this, ColorPickerParts.All);
-            }
-            finally
-            {
-                _isUpdating = false;
-            }
-
-            UpdateSelectedColor(false);
         }
 
         private void UpdateSelectedColor(bool reset = true)

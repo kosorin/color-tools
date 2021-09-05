@@ -1,3 +1,5 @@
+using System.Windows.Media;
+
 namespace ColorTools
 {
     public interface IColorPicker : IColorState
@@ -7,6 +9,8 @@ namespace ColorTools
         double Alpha { get; set; }
 
         IColor Color { get; set; }
+
+        void ReplaceSelectedColor(Color? newColor);
 
         void BeginUpdate();
 

@@ -102,6 +102,8 @@ namespace ColorTools.Components
             UpdatePicker(Picker);
         }
 
-        protected abstract void UpdatePicker(IColorPicker picker);
+        protected virtual void UpdatePicker(IColorPicker picker)
+        {
+        }
     }
 }

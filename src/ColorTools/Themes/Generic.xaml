@@ -208,32 +208,15 @@
                                         Grid.Column="1"
                                         Margin="12,0,0,0">
                                 <StackPanel Width="80">
-                                    <TextBlock Margin="0,0,0,4" Text="Color" />
-                                    <Border Margin="0,0,0,12"
-                                            Background="{TemplateBinding AlphaBrush}"
-                                            BorderBrush="Gray"
-                                            BorderThickness="1"
-                                            UseLayoutRounding="True">
-                                        <StackPanel>
-                                            <Border x:Name="OriginalColorPreviewBorder"
-                                                    Height="80"
-                                                    ToolTip="Current color">
-                                                <Border.Background>
-                                                    <SolidColorBrush Color="{Binding OriginalColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NullableColorConverter}}" />
-                                                </Border.Background>
-                                            </Border>
-                                            <Border Height="80"
-                                                    Tag="asd"
-                                                    ToolTip="New color">
-                                                <brushSources:BrushSource.Background>
-                                                    <brushSources:SelectedColorBrushSource EmptyBrush="{Binding EmptyBrush, RelativeSource={RelativeSource TemplatedParent}}" Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                                </brushSources:BrushSource.Background>
-                                                <Border.Background>
-                                                    <Binding Path="(brushSources:BrushSource.Background).Value" RelativeSource="{RelativeSource Self}" />
-                                                </Border.Background>
-                                            </Border>
-                                        </StackPanel>
-                                    </Border>
+                                    <components:ColorPreview Margin="0,0,0,12"
+                                                             AlphaBrush="{TemplateBinding AlphaBrush}"
+                                                             Header="Color"
+                                                             OriginalColor="{TemplateBinding OriginalColor}"
+                                                             Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                        <components:ColorPreview.SelectedColorBrushSource>
+                                            <brushSources:SelectedColorBrushSource EmptyBrush="{Binding EmptyBrush, RelativeSource={RelativeSource TemplatedParent}}" Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </components:ColorPreview.SelectedColorBrushSource>
+                                    </components:ColorPreview>
                                     <TextBlock Margin="0,0,0,4" Text="Hex" />
                                     <TextBox behaviors:ColorTextBoxBehavior.Enable="True" Text="{Binding SelectedHex, RelativeSource={RelativeSource TemplatedParent}}" />
                                 </StackPanel>
@@ -241,9 +224,6 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="OriginalColor" Value="{x:Null}">
-                            <Setter TargetName="OriginalColorPreviewBorder" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
                         <Trigger Property="AllowAlpha" Value="False">
                             <Setter TargetName="AlphaSlider" Property="Visibility" Value="Collapsed" />
                         </Trigger>
@@ -275,24 +255,26 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <ContentPresenter x:Name="HeaderPresenter"
                                           Grid.Row="0"
                                           Grid.Column="0"
-                                          Grid.ColumnSpan="2"
+                                          Grid.ColumnSpan="3"
                                           Margin="0,0,0,4"
                                           VerticalAlignment="Center"
                                           Content="{TemplateBinding Header}"
                                           ContentTemplate="{TemplateBinding HeaderTemplate}" />
                         <TextBox x:Name="ValueBox"
                                  Grid.Row="1"
-                                 Grid.Column="1"
+                                 Grid.Column="2"
                                  Width="48"
-                                 Margin="12,0,0,0"
+                                 Margin="8,0,0,0"
                                  VerticalAlignment="Stretch"
                                  HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -300,7 +282,7 @@
                                  Text="{Binding Value, StringFormat=N2, RelativeSource={RelativeSource TemplatedParent}}" />
                         <Border x:Name="ComponentContainer"
                                 Grid.Row="1"
-                                Grid.Column="0"
+                                Grid.Column="1"
                                 Background="{TemplateBinding AlphaBrush}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -330,11 +312,18 @@
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="Orientation" Value="Vertical">
-                            <Setter Property="Width" Value="32" />
-                            <Setter Property="Height" Value="{x:Static system:Double.NaN}" />
+                        <Trigger Property="Header" Value="{x:Null}">
                             <Setter TargetName="HeaderPresenter" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ValueBox" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Orientation" Value="Vertical">
+                            <Setter Property="Width" Value="40" />
+                            <Setter Property="Height" Value="{x:Static system:Double.NaN}" />
+                            <Setter TargetName="HeaderPresenter" Property="HorizontalAlignment" Value="Center" />
+                            <Setter TargetName="ValueBox" Property="Grid.Row" Value="2" />
+                            <Setter TargetName="ValueBox" Property="Grid.Column" Value="1" />
+                            <Setter TargetName="ValueBox" Property="Margin" Value="0,8,0,0" />
+                            <Setter TargetName="ValueBox" Property="Width" Value="{x:Static system:Double.NaN}" />
+                            <Setter TargetName="ValueBox" Property="Height" Value="30" />
                             <Setter TargetName="ComponentCanvas" Property="Cursor" Value="SizeNS" />
                             <Setter TargetName="Handle" Property="Width" Value="{Binding ActualWidth, ElementName=ComponentCanvas}" />
                             <Setter TargetName="Handle" Property="Height" Value="10" />
@@ -354,36 +343,104 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type components:ColorCanvas}">
-                    <Border Background="{TemplateBinding AlphaBrush}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            ClipToBounds="False"
-                            UseLayoutRounding="True">
-                        <Canvas x:Name="ComponentCanvas"
-                                Background="{Binding CanvasBrushSource.Value, RelativeSource={RelativeSource TemplatedParent}}"
-                                Cursor="Cross">
-                            <Canvas x:Name="Handle"
-                                    Width="13"
-                                    Height="13"
-                                    IsHitTestVisible="False">
-                                <Canvas.RenderTransform>
-                                    <TranslateTransform x:Name="HandleTranslateTransform" />
-                                </Canvas.RenderTransform>
-                                <Ellipse Width="13"
-                                         Height="13"
-                                         IsHitTestVisible="False"
-                                         Stroke="Black"
-                                         StrokeThickness="1" />
-                                <Ellipse Canvas.Left="1"
-                                         Canvas.Top="1"
-                                         Width="11"
-                                         Height="11"
-                                         IsHitTestVisible="False"
-                                         Stroke="White"
-                                         StrokeThickness="1" />
+                    <Grid Background="{TemplateBinding Background}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <ContentPresenter x:Name="HeaderPresenter"
+                                          Grid.Row="0"
+                                          Margin="0,0,0,4"
+                                          VerticalAlignment="Center"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}" />
+                        <Border Grid.Row="1"
+                                Background="{TemplateBinding AlphaBrush}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                ClipToBounds="False"
+                                UseLayoutRounding="True">
+                            <Canvas x:Name="ComponentCanvas"
+                                    Background="{Binding CanvasBrushSource.Value, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Cursor="Cross">
+                                <Canvas x:Name="Handle"
+                                        Width="13"
+                                        Height="13"
+                                        IsHitTestVisible="False">
+                                    <Canvas.RenderTransform>
+                                        <TranslateTransform x:Name="HandleTranslateTransform" />
+                                    </Canvas.RenderTransform>
+                                    <Ellipse Width="13"
+                                             Height="13"
+                                             IsHitTestVisible="False"
+                                             Stroke="Black"
+                                             StrokeThickness="1" />
+                                    <Ellipse Canvas.Left="1"
+                                             Canvas.Top="1"
+                                             Width="11"
+                                             Height="11"
+                                             IsHitTestVisible="False"
+                                             Stroke="White"
+                                             StrokeThickness="1" />
+                                </Canvas>
                             </Canvas>
-                        </Canvas>
-                    </Border>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Header" Value="{x:Null}">
+                            <Setter TargetName="HeaderPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type components:ColorPreview}">
+        <Setter Property="AlphaBrush" Value="{StaticResource AlphaBrush}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="BorderBrush" Value="Gray" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type components:ColorPreview}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <ContentPresenter x:Name="HeaderPresenter"
+                                          Grid.Row="0"
+                                          Margin="0,0,0,4"
+                                          VerticalAlignment="Center"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}" />
+                        <Border Grid.Row="1"
+                                Background="{TemplateBinding AlphaBrush}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                UseLayoutRounding="True">
+                            <StackPanel>
+                                <Border x:Name="OriginalColorBorder"
+                                        Height="80"
+                                        Cursor="Hand"
+                                        ToolTip="Reset color">
+                                    <Border.Background>
+                                        <SolidColorBrush Color="{Binding OriginalColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NullableColorConverter}}" />
+                                    </Border.Background>
+                                </Border>
+                                <Border Height="80" Background="{Binding SelectedColorBrushSource.Value, RelativeSource={RelativeSource TemplatedParent}}" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Header" Value="{x:Null}">
+                            <Setter TargetName="HeaderPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="OriginalColor" Value="{x:Null}">
+                            <Setter TargetName="OriginalColorBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
