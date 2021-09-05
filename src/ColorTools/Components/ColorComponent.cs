@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ColorTools.Components
 {
@@ -9,6 +10,15 @@ namespace ColorTools.Components
             DependencyProperty.Register(nameof(Picker), typeof(IColorPicker), typeof(ColorComponent),
                 new PropertyMetadata(null, OnPickerPropertyChanged));
 
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register(nameof(Header), typeof(object), typeof(ColorComponent), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty HeaderTemplateProperty =
+            DependencyProperty.Register(nameof(HeaderTemplate), typeof(DataTemplate), typeof(ColorComponent), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty AlphaBrushProperty =
+            DependencyProperty.Register(nameof(AlphaBrush), typeof(Brush), typeof(ColorComponent), new PropertyMetadata(Brushes.Transparent));
+
         private bool _isUpdating;
 
         protected virtual ColorPickerParts PickerParts => ColorPickerParts.Color;
@@ -17,6 +27,24 @@ namespace ColorTools.Components
         {
             get => (IColorPicker?)GetValue(PickerProperty);
             set => SetValue(PickerProperty, value);
+        }
+
+        public object? Header
+        {
+            get => GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
+        }
+
+        public DataTemplate? HeaderTemplate
+        {
+            get => (DataTemplate?)GetValue(HeaderTemplateProperty);
+            set => SetValue(HeaderTemplateProperty, value);
+        }
+
+        public Brush AlphaBrush
+        {
+            get => (Brush)GetValue(AlphaBrushProperty);
+            set => SetValue(AlphaBrushProperty, value);
         }
 
         private static void OnPickerPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)

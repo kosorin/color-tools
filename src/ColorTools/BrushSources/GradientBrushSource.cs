@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace ColorTools.BrushSources
 {
-    public abstract class GradientBrushSource : BrushSource
+    public abstract class GradientBrushSource : PickerBrushSource
     {
         public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(GradientBrushSource),

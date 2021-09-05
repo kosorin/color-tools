@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace ColorTools.BrushSources
 {
-    public class HslCanvasBrushSource : BrushSource
+    public class HslCanvasBrushSource : PickerBrushSource
     {
         private readonly GradientStop _accentGradientStop;
 

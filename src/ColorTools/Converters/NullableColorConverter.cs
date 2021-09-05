@@ -6,15 +6,13 @@ using System.Windows.Media;
 
 namespace ColorTools.Converters
 {
-    public class NullableColorToColorConverter : IValueConverter
+    public class NullableColorConverter : IValueConverter
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return (value, parameter) switch
+            return value switch
             {
-                (null, Color color) => color,
-                (null, _) => Colors.Transparent,
-                (Color color, _) => color,
+                Color color => color,
                 _ => DependencyProperty.UnsetValue,
             };
         }

@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace ColorTools.BrushSources
 {
-    public class SelectedColorBrushSource : BrushSource
+    public class SelectedColorBrushSource : PickerBrushSource
     {
         public static readonly DependencyProperty EmptyBrushProperty =
             DependencyProperty.Register(nameof(EmptyBrush), typeof(Brush), typeof(SelectedColorBrushSource),

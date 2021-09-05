@@ -7,7 +7,7 @@
                     xmlns:converters="clr-namespace:ColorTools.Converters"
                     xmlns:system="clr-namespace:System;assembly=System">
 
-    <converters:NullableColorToColorConverter x:Key="NullableColorToColorConverter" />
+    <converters:NullableColorConverter x:Key="NullableColorConverter" />
 
     <DrawingBrush x:Key="AlphaBrush"
                   TileMode="Tile"
@@ -97,17 +97,16 @@
                                     <components:HsbSaturationBrightnessCanvas Grid.Column="0"
                                                                               Margin="0,0,8,0"
                                                                               Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorCanvas.CanvasBrushSource>
                                             <brushSources:HsbCanvasBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorCanvas.CanvasBrushSource>
                                     </components:HsbSaturationBrightnessCanvas>
                                     <components:HsbHueSlider Grid.Column="1"
-                                                             AlphaBrush="{TemplateBinding AlphaBrush}"
                                                              Orientation="Vertical"
                                                              Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:HueGradientBrushSource Orientation="Vertical" Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:HsbHueSlider>
                                 </Grid>
                             </Grid>
@@ -128,80 +127,71 @@
                                 </StackPanel>
                                 <StackPanel x:Name="HslContainer" Visibility="Collapsed">
                                     <components:HslHueSlider Margin="0,0,0,8"
-                                                             AlphaBrush="{TemplateBinding AlphaBrush}"
                                                              Header="Hue"
                                                              Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:HslHueGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:HslHueSlider>
                                     <components:HslSaturationSlider Margin="0,0,0,8"
-                                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
                                                                     Header="Saturation"
                                                                     Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:HslSaturationGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:HslSaturationSlider>
                                     <components:HslLightnessSlider Margin="0,0,0,8"
-                                                                   AlphaBrush="{TemplateBinding AlphaBrush}"
                                                                    Header="Lightness"
                                                                    Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:HslLightnessGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:HslLightnessSlider>
                                 </StackPanel>
                                 <StackPanel x:Name="HsbContainer" Visibility="Collapsed">
                                     <components:HsbHueSlider Margin="0,0,0,8"
-                                                             AlphaBrush="{TemplateBinding AlphaBrush}"
                                                              Header="Hue"
                                                              Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:HsbHueGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:HsbHueSlider>
                                     <components:HsbSaturationSlider Margin="0,0,0,8"
-                                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
                                                                     Header="Saturation"
                                                                     Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:HsbSaturationGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:HsbSaturationSlider>
                                     <components:HsbBrightnessSlider Margin="0,0,0,8"
-                                                                    AlphaBrush="{TemplateBinding AlphaBrush}"
                                                                     Header="Brightness"
                                                                     Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:HsbBrightnessGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:HsbBrightnessSlider>
                                 </StackPanel>
                                 <StackPanel x:Name="RgbContainer" Visibility="Collapsed">
                                     <components:RgbRedSlider Margin="0,0,0,8"
-                                                             AlphaBrush="{TemplateBinding AlphaBrush}"
                                                              Header="Red"
                                                              Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:RgbRedGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:RgbRedSlider>
                                     <components:RgbGreenSlider Margin="0,0,0,8"
-                                                               AlphaBrush="{TemplateBinding AlphaBrush}"
                                                                Header="Green"
                                                                Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:RgbGreenGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:RgbGreenSlider>
                                     <components:RgbBlueSlider Margin="0,0,0,8"
-                                                              AlphaBrush="{TemplateBinding AlphaBrush}"
                                                               Header="Blue"
                                                               Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                        <brushSources:BrushSource.Background>
+                                        <components:ColorSlider.CanvasBrushSource>
                                             <brushSources:RgbBlueGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </brushSources:BrushSource.Background>
+                                        </components:ColorSlider.CanvasBrushSource>
                                     </components:RgbBlueSlider>
                                 </StackPanel>
                                 <components:AlphaSlider x:Name="AlphaSlider"
@@ -209,9 +199,9 @@
                                                         AlphaBrush="{TemplateBinding AlphaBrush}"
                                                         Header="Opacity"
                                                         Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                    <brushSources:BrushSource.Background>
+                                    <components:ColorSlider.CanvasBrushSource>
                                         <brushSources:AlphaGradientBrushSource Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-                                    </brushSources:BrushSource.Background>
+                                    </components:ColorSlider.CanvasBrushSource>
                                 </components:AlphaSlider>
                             </StackPanel>
                             <StackPanel Grid.Row="1"
@@ -229,7 +219,7 @@
                                                     Height="80"
                                                     ToolTip="Current color">
                                                 <Border.Background>
-                                                    <SolidColorBrush Color="{Binding OriginalColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NullableColorToColorConverter}}" />
+                                                    <SolidColorBrush Color="{Binding OriginalColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NullableColorConverter}}" />
                                                 </Border.Background>
                                             </Border>
                                             <Border Height="80"
@@ -316,7 +306,7 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 UseLayoutRounding="True">
                             <Canvas x:Name="ComponentCanvas"
-                                    Background="{Binding Path=(brushSources:BrushSource.Background).Value, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Background="{Binding Path=CanvasBrushSource.Value, RelativeSource={RelativeSource TemplatedParent}}"
                                     Cursor="SizeWE">
                                 <Border x:Name="Handle"
                                         Width="10"
@@ -370,7 +360,7 @@
                             ClipToBounds="False"
                             UseLayoutRounding="True">
                         <Canvas x:Name="ComponentCanvas"
-                                Background="{Binding Path=(brushSources:BrushSource.Background).Value, RelativeSource={RelativeSource TemplatedParent}}"
+                                Background="{Binding CanvasBrushSource.Value, RelativeSource={RelativeSource TemplatedParent}}"
                                 Cursor="Cross">
                             <Canvas x:Name="Handle"
                                     Width="13"

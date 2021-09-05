@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace ColorTools.BrushSources
 {
-    public class HsbCanvasBrushSource : BrushSource
+    public class HsbCanvasBrushSource : PickerBrushSource
     {
         private readonly SolidColorBrush _accentBrush;
 

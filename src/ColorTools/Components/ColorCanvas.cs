@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using ColorTools.BrushSources;
 
 namespace ColorTools.Components
 {
@@ -14,14 +15,8 @@ namespace ColorTools.Components
             DependencyProperty.Register(nameof(Value), typeof(Point), typeof(ColorCanvas),
                 new FrameworkPropertyMetadata(new Point(0, 1), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, OnCoerceValue));
 
-        public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register(nameof(Header), typeof(object), typeof(ColorCanvas), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty HeaderTemplateProperty =
-            DependencyProperty.Register(nameof(HeaderTemplate), typeof(DataTemplate), typeof(ColorCanvas), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty AlphaBrushProperty =
-            DependencyProperty.Register(nameof(AlphaBrush), typeof(Brush), typeof(ColorCanvas), new PropertyMetadata(Brushes.Transparent));
+        public static readonly DependencyProperty CanvasBrushSourceProperty =
+            DependencyProperty.Register(nameof(CanvasBrushSource), typeof(BrushSource), typeof(ColorCanvas), new PropertyMetadata(null));
 
         private Canvas? _componentCanvas;
 
@@ -34,6 +29,8 @@ namespace ColorTools.Components
 
         protected ColorCanvas()
         {
+            SetCurrentValue(CanvasBrushSourceProperty, new SolidColorBrushSource());
+
             Loaded += OnLoaded;
             IsVisibleChanged += OnIsVisibleChanged;
         }
@@ -44,22 +41,10 @@ namespace ColorTools.Components
             set => SetValue(ValueProperty, value);
         }
 
-        public object? Header
+        public BrushSource CanvasBrushSource
         {
-            get => GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
-        }
-
-        public DataTemplate? HeaderTemplate
-        {
-            get => (DataTemplate?)GetValue(HeaderTemplateProperty);
-            set => SetValue(HeaderTemplateProperty, value);
-        }
-
-        public Brush AlphaBrush
-        {
-            get => (Brush)GetValue(AlphaBrushProperty);
-            set => SetValue(AlphaBrushProperty, value);
+            get => (BrushSource)GetValue(CanvasBrushSourceProperty);
+            set => SetValue(CanvasBrushSourceProperty, value);
         }
 
         private Canvas? ComponentCanvas
