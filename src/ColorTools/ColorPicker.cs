@@ -63,7 +63,14 @@ namespace ColorTools
             get => _isSet;
             set
             {
-                _isSet = value;
+                if (!value && !AllowEmpty)
+                {
+                    _isSet = true;
+                }
+                else
+                {
+                    _isSet = value;
+                }
 
                 OnIsSetChanged();
             }
@@ -74,12 +81,19 @@ namespace ColorTools
             get => _alpha;
             set
             {
-                _alpha = value switch
+                if (value < 1 && !AllowAlpha)
                 {
-                    < 0 => 0,
-                    > 1 => 1,
-                    var a => a,
-                };
+                    _alpha = 1;
+                }
+                else
+                {
+                    _alpha = value switch
+                    {
+                        < 0 => 0,
+                        > 1 => 1,
+                        var a => a,
+                    };
+                }
 
                 OnAlphaChanged();
             }
@@ -300,57 +314,37 @@ namespace ColorTools
             UpdateSelectedColor();
         }
 
-        private void ReplaceSelectedColor(Color? selectedColor)
+        private void ReplaceSelectedColor(Color? newColor)
         {
             _isUpdating = true;
             try
             {
-                if (!selectedColor.HasValue && !AllowEmpty)
+                _isBulkChange = true;
+                try
                 {
-                    selectedColor = Color.ToColor(AllowAlpha ? Alpha : 1);
-                }
-
-                if (selectedColor.HasValue)
-                {
-                    if (selectedColor.Value.A != 255 && !AllowAlpha)
-                    {
-                        selectedColor = selectedColor.Value.WithoutAlpha();
-                    }
-
-                    _isBulkChange = true;
-                    try
+                    if (newColor.HasValue)
                     {
                         IsSet = true;
-                        Alpha = selectedColor.Value.A / 255d;
-                        Color = selectedColor.Value.ToRgb();
+                        Alpha = newColor.Value.A / 255d;
+                        Color = newColor.Value.ToRgb();
                     }
-                    finally
+                    else
                     {
-                        _isBulkChange = false;
-                    }
-                    Changed?.Invoke(this, ColorPickerParts.All);
-
-                    if (!_isSuspended)
-                    {
-                        SetCurrentValue(SelectedColorProperty, selectedColor.Value);
-                        SetCurrentValue(SelectedHexProperty, selectedColor.Value.ToHex(AllowAlpha));
+                        IsSet = false;
                     }
                 }
-                else
+                finally
                 {
-                    IsSet = false;
-
-                    if (!_isSuspended)
-                    {
-                        SetCurrentValue(SelectedColorProperty, null);
-                        SetCurrentValue(SelectedHexProperty, string.Empty);
-                    }
+                    _isBulkChange = false;
                 }
+                Changed?.Invoke(this, ColorPickerParts.All);
             }
             finally
             {
                 _isUpdating = false;
             }
+
+            UpdateSelectedColor(false);
         }
 
         private void UpdateSelectedColor(bool reset = true)
@@ -363,24 +357,14 @@ namespace ColorTools
                     IsSet = true;
                 }
 
-                if (IsSet)
+                if (_isSuspended)
                 {
-                    var selectedColor = Color.ToColor(AllowAlpha ? Alpha : 1);
+                    return;
+                }
 
-                    if (!_isSuspended)
-                    {
-                        SetCurrentValue(SelectedColorProperty, selectedColor);
-                        SetCurrentValue(SelectedHexProperty, selectedColor.ToHex(AllowAlpha));
-                    }
-                }
-                else
-                {
-                    if (!_isSuspended)
-                    {
-                        SetCurrentValue(SelectedColorProperty, null);
-                        SetCurrentValue(SelectedHexProperty, string.Empty);
-                    }
-                }
+                Color? selectedColor = IsSet ? Color.ToColor(Alpha) : null;
+                SetCurrentValue(SelectedColorProperty, selectedColor);
+                SetCurrentValue(SelectedHexProperty, selectedColor?.ToHex(AllowAlpha) ?? string.Empty);
             }
             finally
             {
