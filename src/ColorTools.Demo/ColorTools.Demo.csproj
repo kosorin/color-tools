@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ColorTools\ColorTools.csproj" />
+        <ProjectReference Include="..\ColorTools\ColorTools.csproj"/>
     </ItemGroup>
 
 </Project>

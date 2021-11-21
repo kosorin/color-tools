@@ -3,9 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:color="clr-namespace:ColorTools;assembly=ColorTools"
         Title="Color Tools Demo"
         Width="800"
-        Height="450"
+        Height="800"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
-    <Grid />
+    <DockPanel Margin="24">
+        <color:ColorPicker x:Name="Picker" DockPanel.Dock="Left" />
+        <StackPanel Margin="24,0,0,0">
+            <Button Click="OriginalColor_OnClick" Content="Set random original color" />
+            <Button Click="SelectedColor_OnClick" Content="Set random color" />
+            <CheckBox Content="Allow alpha" IsChecked="{Binding ElementName=Picker, Path=AllowAlpha}" />
+            <CheckBox Content="Allow empty" IsChecked="{Binding ElementName=Picker, Path=AllowEmpty}" />
+            <TextBox Text="{Binding ElementName=Picker, Path=SelectedColor}" />
+            <TextBox Text="{Binding ElementName=Picker, Path=SelectedHex}" />
+        </StackPanel>
+    </DockPanel>
 </Window>
