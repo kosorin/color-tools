@@ -16,6 +16,9 @@ namespace ColorTools.Components
             DependencyProperty.Register(nameof(Value), typeof(double), typeof(ColorSlider),
                 new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, OnCoerceValue));
 
+        public static readonly DependencyProperty ShowValueProperty =
+            DependencyProperty.Register(nameof(ShowValue), typeof(bool), typeof(ColorSlider), new PropertyMetadata(true));
+
         public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(ColorSlider), new PropertyMetadata(Orientation.Horizontal));
 
@@ -43,6 +46,12 @@ namespace ColorTools.Components
         {
             get => (double)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
+        }
+
+        public bool ShowValue
+        {
+            get => (bool)GetValue(ShowValueProperty);
+            set => SetValue(ShowValueProperty, value);
         }
 
         public Orientation Orientation

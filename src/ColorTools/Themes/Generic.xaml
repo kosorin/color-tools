@@ -315,6 +315,9 @@
                         <Trigger Property="Header" Value="{x:Null}">
                             <Setter TargetName="HeaderPresenter" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+                        <Trigger Property="ShowValue" Value="False">
+                            <Setter TargetName="ValueBox" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <Trigger Property="Orientation" Value="Vertical">
                             <Setter Property="Width" Value="40" />
                             <Setter Property="Height" Value="{x:Static system:Double.NaN}" />
