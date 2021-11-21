@@ -5,7 +5,7 @@
                     xmlns:color="clr-namespace:ColorTools"
                     xmlns:components="clr-namespace:ColorTools.Components"
                     xmlns:converters="clr-namespace:ColorTools.Converters"
-                    xmlns:system="clr-namespace:System;assembly=System">
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <converters:NullableColorConverter x:Key="NullableColorConverter" />
 
