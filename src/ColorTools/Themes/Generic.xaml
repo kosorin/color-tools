@@ -102,6 +102,7 @@
                                         </components:ColorCanvas.CanvasBrushSource>
                                     </components:HsbSaturationBrightnessCanvas>
                                     <components:HsbHueSlider Grid.Column="1"
+                                                             DisplayRange="360"
                                                              Orientation="Vertical"
                                                              Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                                         <components:ColorSlider.CanvasBrushSource>
@@ -127,6 +128,7 @@
                                 </StackPanel>
                                 <StackPanel x:Name="HslContainer" Visibility="Collapsed">
                                     <components:HslHueSlider Margin="0,0,0,8"
+                                                             DisplayRange="360"
                                                              Header="Hue"
                                                              Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                                         <components:ColorSlider.CanvasBrushSource>
@@ -150,6 +152,7 @@
                                 </StackPanel>
                                 <StackPanel x:Name="HsbContainer" Visibility="Collapsed">
                                     <components:HsbHueSlider Margin="0,0,0,8"
+                                                             DisplayRange="360"
                                                              Header="Hue"
                                                              Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                                         <components:ColorSlider.CanvasBrushSource>
@@ -173,6 +176,8 @@
                                 </StackPanel>
                                 <StackPanel x:Name="RgbContainer" Visibility="Collapsed">
                                     <components:RgbRedSlider Margin="0,0,0,8"
+                                                             DisplayDecimalPlaces="0"
+                                                             DisplayRange="255"
                                                              Header="Red"
                                                              Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                                         <components:ColorSlider.CanvasBrushSource>
@@ -180,6 +185,8 @@
                                         </components:ColorSlider.CanvasBrushSource>
                                     </components:RgbRedSlider>
                                     <components:RgbGreenSlider Margin="0,0,0,8"
+                                                               DisplayDecimalPlaces="0"
+                                                               DisplayRange="255"
                                                                Header="Green"
                                                                Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                                         <components:ColorSlider.CanvasBrushSource>
@@ -187,6 +194,8 @@
                                         </components:ColorSlider.CanvasBrushSource>
                                     </components:RgbGreenSlider>
                                     <components:RgbBlueSlider Margin="0,0,0,8"
+                                                              DisplayDecimalPlaces="0"
+                                                              DisplayRange="255"
                                                               Header="Blue"
                                                               Picker="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                                         <components:ColorSlider.CanvasBrushSource>
@@ -279,7 +288,7 @@
                                  HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
                                  behaviors:ColorTextBoxBehavior.Enable="True"
-                                 Text="{Binding Value, StringFormat=N2, RelativeSource={RelativeSource TemplatedParent}}" />
+                                 Text="{Binding DisplayValue, RelativeSource={RelativeSource TemplatedParent}}" />
                         <Border x:Name="ComponentContainer"
                                 Grid.Row="1"
                                 Grid.Column="1"

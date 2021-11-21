@@ -16,6 +16,19 @@ namespace ColorTools.Components
             DependencyProperty.Register(nameof(Value), typeof(double), typeof(ColorSlider),
                 new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, OnCoerceValue));
 
+        public static readonly DependencyProperty DisplayValueProperty =
+            DependencyProperty.Register(nameof(DisplayValue), typeof(string), typeof(ColorSlider),
+                new FrameworkPropertyMetadata("0", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnDisplayValuePropertyChanged));
+
+        public static readonly DependencyProperty DisplayRangeProperty =
+            DependencyProperty.Register(nameof(DisplayRange), typeof(double), typeof(ColorSlider),
+                new FrameworkPropertyMetadata(100d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnDisplayRangePropertyChanged));
+
+        public static readonly DependencyProperty DisplayDecimalPlacesProperty =
+            DependencyProperty.Register(nameof(DisplayDecimalPlaces), typeof(int), typeof(ColorSlider),
+                new FrameworkPropertyMetadata(1, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnDisplayDecimalPlacesPropertyChanged));
+
+
         public static readonly DependencyProperty ShowValueProperty =
             DependencyProperty.Register(nameof(ShowValue), typeof(bool), typeof(ColorSlider), new PropertyMetadata(true));
 
@@ -28,6 +41,7 @@ namespace ColorTools.Components
         private Canvas? _componentCanvas;
 
         private bool _isDragging;
+        private bool _isValueChanging;
 
         static ColorSlider()
         {
@@ -37,7 +51,7 @@ namespace ColorTools.Components
         protected ColorSlider()
         {
             SetCurrentValue(CanvasBrushSourceProperty, new SolidColorBrushSource());
-            
+
             Loaded += OnLoaded;
             IsVisibleChanged += OnIsVisibleChanged;
         }
@@ -46,6 +60,24 @@ namespace ColorTools.Components
         {
             get => (double)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
+        }
+
+        public string DisplayValue
+        {
+            get => (string)GetValue(DisplayValueProperty);
+            set => SetValue(DisplayValueProperty, value);
+        }
+
+        public double DisplayRange
+        {
+            get => (double)GetValue(DisplayRangeProperty);
+            set => SetValue(DisplayRangeProperty, value);
+        }
+
+        public int DisplayDecimalPlaces
+        {
+            get => (int)GetValue(DisplayDecimalPlacesProperty);
+            set => SetValue(DisplayDecimalPlacesProperty, value);
         }
 
         public bool ShowValue
@@ -106,16 +138,19 @@ namespace ColorTools.Components
             HandleTranslateTransform = GetTemplateChild(nameof(HandleTranslateTransform)) as TranslateTransform;
 
             UpdateHandleCurrentPosition();
+            TryUpdateDisplayValue();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             UpdateHandleCurrentPosition();
+            TryUpdateDisplayValue();
         }
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
         {
             UpdateHandleCurrentPosition();
+            TryUpdateDisplayValue();
         }
 
         protected override void OnKeyDown(KeyEventArgs args)
@@ -141,6 +176,29 @@ namespace ColorTools.Components
             }
         }
 
+        private static void OnDisplayValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            if (sender is ColorSlider slider)
+            {
+                slider.OnDisplayValueChanged();
+            }
+        }
+
+        private static void OnDisplayRangePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            if (sender is ColorSlider slider)
+            {
+                slider.TryUpdateDisplayValue();
+            }
+        }
+        private static void OnDisplayDecimalPlacesPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            if (sender is ColorSlider slider)
+            {
+                slider.TryUpdateDisplayValue();
+            }
+        }
+
         private static object OnCoerceValue(DependencyObject sender, object baseValue)
         {
             return baseValue switch
@@ -154,9 +212,44 @@ namespace ColorTools.Components
 
         private void OnValueChanged()
         {
-            UpdateHandleCurrentPosition();
+            _isValueChanging = true;
+            try
+            {
+                UpdateHandleCurrentPosition();
+                TryUpdateDisplayValue();
 
-            TryUpdatePicker();
+                TryUpdatePicker();
+            }
+            finally
+            {
+                _isValueChanging = false;
+            }
+        }
+
+        private void OnDisplayValueChanged()
+        {
+            TryUpdateValue();
+        }
+
+        private void TryUpdateDisplayValue()
+        {
+            DisplayValue = (Value * DisplayRange).ToString("N" + DisplayDecimalPlaces);
+        }
+
+        private void TryUpdateValue()
+        {
+            if (!_isValueChanging)
+            {
+                if (DisplayRange == 0)
+                {
+                    throw new DivideByZeroException();
+                }
+
+                if (double.TryParse(DisplayValue, out var value))
+                {
+                    Value = Math.Round(value, DisplayDecimalPlaces) / DisplayRange;
+                }
+            }
         }
 
         private void OnComponentCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
