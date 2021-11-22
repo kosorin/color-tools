@@ -39,6 +39,13 @@ namespace Koda.ColorTools
         /// </summary>
         public double B { get; }
 
+        public void Deconstruct(out double r, out double g, out double b)
+        {
+            r = R;
+            g = G;
+            b = B;
+        }
+
         public RgbColor ToRgb()
         {
             return this;

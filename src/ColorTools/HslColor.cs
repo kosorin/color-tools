@@ -42,6 +42,13 @@ namespace Koda.ColorTools
         /// </summary>
         public double L { get; }
 
+        public void Deconstruct(out double h, out double s, out double l)
+        {
+            h = H;
+            s = S;
+            l = L;
+        }
+
         public HslColor Lighten(double amount)
         {
             return new HslColor(H, S, L * amount);

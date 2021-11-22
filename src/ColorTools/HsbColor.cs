@@ -42,6 +42,13 @@
         /// </summary>
         public double B { get; }
 
+        public void Deconstruct(out double h, out double s, out double b)
+        {
+            h = H;
+            s = S;
+            b = B;
+        }
+
         public RgbColor ToRgb()
         {
             double r, g, b;
