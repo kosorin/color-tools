@@ -13,6 +13,8 @@ namespace Koda.ColorTools.Wpf
 
         public static bool TryParseHex(this string hex, out Color color)
         {
+            color = new Color();
+
             if (string.IsNullOrEmpty(hex))
             {
                 return false;
