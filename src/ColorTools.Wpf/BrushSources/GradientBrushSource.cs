@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Koda.ColorTools.BrushSources
+namespace Koda.ColorTools.Wpf.BrushSources
 {
     public abstract class GradientBrushSource : PickerBrushSource
     {

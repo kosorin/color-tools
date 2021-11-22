@@ -1,4 +1,4 @@
-namespace Koda.ColorTools
+namespace Koda.ColorTools.Wpf
 {
     public interface IColorState
     {

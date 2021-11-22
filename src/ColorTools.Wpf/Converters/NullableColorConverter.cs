@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Koda.ColorTools.Converters
+namespace Koda.ColorTools.Wpf.Converters
 {
     public class NullableColorConverter : IValueConverter
     {

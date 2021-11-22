@@ -1,11 +1,11 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:behaviors="clr-namespace:Koda.ColorTools.Behaviors"
-                    xmlns:brushSources="clr-namespace:Koda.ColorTools.BrushSources"
-                    xmlns:color="clr-namespace:Koda.ColorTools"
-                    xmlns:components="clr-namespace:Koda.ColorTools.Components"
-                    xmlns:converters="clr-namespace:Koda.ColorTools.Converters"
-                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+                    xmlns:behaviors="clr-namespace:Koda.ColorTools.Wpf.Behaviors"
+                    xmlns:brushSources="clr-namespace:Koda.ColorTools.Wpf.BrushSources"
+                    xmlns:components="clr-namespace:Koda.ColorTools.Wpf.Components"
+                    xmlns:converters="clr-namespace:Koda.ColorTools.Wpf.Converters"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:wpf="clr-namespace:Koda.ColorTools.Wpf">
 
     <converters:NullableColorConverter x:Key="NullableColorConverter" />
 
@@ -62,7 +62,7 @@
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
-    <Style TargetType="{x:Type color:ColorPicker}">
+    <Style TargetType="{x:Type wpf:ColorPicker}">
         <Setter Property="Padding" Value="12" />
         <Setter Property="Width" Value="400" />
         <Setter Property="Background" Value="#EEE" />
@@ -71,7 +71,7 @@
         <Setter Property="EmptyBrush" Value="{StaticResource EmptyBrush}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type color:ColorPicker}">
+                <ControlTemplate TargetType="{x:Type wpf:ColorPicker}">
                     <Border Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"

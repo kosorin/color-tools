@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace Koda.ColorTools
+namespace Koda.ColorTools.Wpf
 {
     public interface IColorPicker : IColorState
     {

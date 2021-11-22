@@ -2,9 +2,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Koda.ColorTools.BrushSources;
+using Koda.ColorTools.Wpf.BrushSources;
 
-namespace Koda.ColorTools.Components
+namespace Koda.ColorTools.Wpf.Components
 {
     [TemplatePart(Name = nameof(OriginalColorBorder), Type = typeof(Border))]
     public class ColorPreview : ColorComponent

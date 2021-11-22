@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace Koda.ColorTools.BrushSources
+namespace Koda.ColorTools.Wpf.BrushSources
 {
     public class HslHueGradientBrushSource : GradientBrushSource
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Koda.ColorTools
+namespace Koda.ColorTools.Wpf
 {
     [Flags]
     public enum ColorPickerParts

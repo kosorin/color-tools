@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Koda.ColorTools
+namespace Koda.ColorTools.Wpf
 {
     public class ColorPicker : Control, IColorPicker
     {

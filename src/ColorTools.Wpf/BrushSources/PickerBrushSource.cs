@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace Koda.ColorTools.BrushSources
+namespace Koda.ColorTools.Wpf.BrushSources
 {
     public abstract class PickerBrushSource : BrushSource
     {
