@@ -161,15 +161,5 @@ namespace Koda.ColorTools.Wpf
         {
             return color.ToRgb().ToHsl();
         }
-
-        public static Color WithAlpha(this Color color, byte alpha)
-        {
-            return Color.FromArgb(alpha, color.R, color.G, color.B);
-        }
-
-        public static Color WithoutAlpha(this Color color)
-        {
-            return Color.FromRgb(color.R, color.G, color.B);
-        }
     }
 }
