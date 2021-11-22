@@ -19,7 +19,7 @@ namespace Koda.ColorTools.Wpf
 
         public static readonly DependencyProperty SelectedHexProperty =
             DependencyProperty.Register(nameof(SelectedHex), typeof(string), typeof(ColorPicker),
-                new FrameworkPropertyMetadata(InitialColor.ToHex(true), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedHexPropertyChanged, OnCoerceSelectedHex));
+                new FrameworkPropertyMetadata(InitialColor.ToHex().ToString(true), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedHexPropertyChanged, OnCoerceSelectedHex));
 
         public static readonly DependencyProperty AllowEmptyProperty =
             DependencyProperty.Register(nameof(AllowEmpty), typeof(bool), typeof(ColorPicker), new PropertyMetadata(true, OnAllowEmptyPropertyChanged));
@@ -314,7 +314,7 @@ namespace Koda.ColorTools.Wpf
                 return;
             }
 
-            ReplaceSelectedColor(SelectedHex.ParseHex());
+            ReplaceSelectedColor(HexColor.TryParse(SelectedHex, out var hex) ? hex.ToColor() : null);
         }
 
         private void OnAllowEmptyChanged()
@@ -364,7 +364,7 @@ namespace Koda.ColorTools.Wpf
 
                 Color? selectedColor = IsSet ? Color.ToColor(Alpha) : null;
                 SetCurrentValue(SelectedColorProperty, selectedColor);
-                SetCurrentValue(SelectedHexProperty, selectedColor?.ToHex(AllowAlpha) ?? string.Empty);
+                SetCurrentValue(SelectedHexProperty, selectedColor?.ToHex().ToString(AllowAlpha) ?? string.Empty);
             }
             finally
             {
