@@ -191,6 +191,7 @@ namespace ColorTools.Components
                 slider.TryUpdateDisplayValue();
             }
         }
+
         private static void OnDisplayDecimalPlacesPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             if (sender is ColorSlider slider)
