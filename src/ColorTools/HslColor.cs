@@ -1,5 +1,3 @@
-using System.Windows.Media;
-
 namespace Koda.ColorTools
 {
     public readonly struct HslColor : IColor
@@ -47,16 +45,6 @@ namespace Koda.ColorTools
         public HslColor Lighten(double amount)
         {
             return new HslColor(H, S, L * amount);
-        }
-
-        public Color ToColor()
-        {
-            return ToRgb().ToColor();
-        }
-
-        public Color ToColor(double alpha)
-        {
-            return ToRgb().ToColor(alpha);
         }
 
         public RgbColor ToRgb()

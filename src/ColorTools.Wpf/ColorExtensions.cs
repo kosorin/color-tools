@@ -127,6 +127,26 @@ namespace Koda.ColorTools.Wpf
             return hex;
         }
 
+        public static Color ToColor(this IColor color)
+        {
+            if (color is not RgbColor rgb)
+            {
+                rgb = color.ToRgb();
+            }
+
+            return Color.FromRgb((byte)rgb.R, (byte)rgb.G, (byte)rgb.B);
+        }
+
+        public static Color ToColor(this IColor color, double alpha)
+        {
+            if (color is not RgbColor rgb)
+            {
+                rgb = color.ToRgb();
+            }
+
+            return Color.FromArgb((byte)(alpha * 255), (byte)rgb.R, (byte)rgb.G, (byte)rgb.B);
+        }
+
         public static RgbColor ToRgb(this Color color)
         {
             return new RgbColor(color.R, color.G, color.B);

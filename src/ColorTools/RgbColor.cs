@@ -1,5 +1,3 @@
-using System.Windows.Media;
-
 namespace Koda.ColorTools
 {
     public readonly struct RgbColor : IColor
@@ -40,16 +38,6 @@ namespace Koda.ColorTools
         /// Blue [0,255]
         /// </summary>
         public double B { get; }
-
-        public Color ToColor()
-        {
-            return Color.FromRgb((byte)R, (byte)G, (byte)B);
-        }
-
-        public Color ToColor(double alpha)
-        {
-            return Color.FromArgb((byte)(alpha * 255), (byte)R, (byte)G, (byte)B);
-        }
 
         public RgbColor ToRgb()
         {

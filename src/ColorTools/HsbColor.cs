@@ -1,6 +1,4 @@
-﻿using System.Windows.Media;
-
-namespace Koda.ColorTools
+﻿namespace Koda.ColorTools
 {
     public readonly struct HsbColor : IColor
     {
@@ -43,16 +41,6 @@ namespace Koda.ColorTools
         /// Brightness/Value [0,100]
         /// </summary>
         public double B { get; }
-
-        public Color ToColor()
-        {
-            return ToRgb().ToColor();
-        }
-
-        public Color ToColor(double alpha)
-        {
-            return ToRgb().ToColor(alpha);
-        }
 
         public RgbColor ToRgb()
         {
