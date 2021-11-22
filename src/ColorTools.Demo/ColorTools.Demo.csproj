@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\ColorTools\ColorTools.csproj" />
+        <ProjectReference Include="..\ColorTools.Wpf\ColorTools.Wpf.csproj" />
     </ItemGroup>
 
 </Project>

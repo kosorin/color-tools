@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorTools", "src\ColorTool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorTools.Demo", "src\ColorTools.Demo\ColorTools.Demo.csproj", "{37F620B6-25EC-49B5-9C6F-0806491D88A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorTools.Wpf", "src\ColorTools.Wpf\ColorTools.Wpf.csproj", "{1B630B22-2389-4E0B-8CD1-DD9DEE3F8C63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{37F620B6-25EC-49B5-9C6F-0806491D88A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37F620B6-25EC-49B5-9C6F-0806491D88A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37F620B6-25EC-49B5-9C6F-0806491D88A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B630B22-2389-4E0B-8CD1-DD9DEE3F8C63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B630B22-2389-4E0B-8CD1-DD9DEE3F8C63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B630B22-2389-4E0B-8CD1-DD9DEE3F8C63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B630B22-2389-4E0B-8CD1-DD9DEE3F8C63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
