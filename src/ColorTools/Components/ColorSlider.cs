@@ -3,9 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using ColorTools.BrushSources;
+using Koda.ColorTools.BrushSources;
 
-namespace ColorTools.Components
+namespace Koda.ColorTools.Components
 {
     [TemplatePart(Name = nameof(ComponentCanvas), Type = typeof(Canvas))]
     [TemplatePart(Name = nameof(Handle), Type = typeof(Border))]

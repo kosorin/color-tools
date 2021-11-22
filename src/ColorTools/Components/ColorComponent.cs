@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace ColorTools.Components
+namespace Koda.ColorTools.Components
 {
     public abstract class ColorComponent : Control
     {

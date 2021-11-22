@@ -1,4 +1,4 @@
-namespace ColorTools.Components
+namespace Koda.ColorTools.Components
 {
     public class HslLightnessSlider : ColorSlider
     {

@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Media;
 
-namespace ColorTools
+namespace Koda.ColorTools
 {
     public static class ColorExtensions
     {

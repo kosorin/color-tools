@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace ColorTools.Demo
+namespace Koda.ColorTools.Demo
 {
     public partial class MainWindow
     {

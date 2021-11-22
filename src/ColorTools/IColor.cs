@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace ColorTools
+namespace Koda.ColorTools
 {
     public interface IColor
     {

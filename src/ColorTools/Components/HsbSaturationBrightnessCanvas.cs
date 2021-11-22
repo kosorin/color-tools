@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace ColorTools.Components
+namespace Koda.ColorTools.Components
 {
     public class HsbSaturationBrightnessCanvas : ColorCanvas
     {

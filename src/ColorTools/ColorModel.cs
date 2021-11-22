@@ -1,4 +1,4 @@
-namespace ColorTools
+namespace Koda.ColorTools
 {
     public enum ColorModel
     {

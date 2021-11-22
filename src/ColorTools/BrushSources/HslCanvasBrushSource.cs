@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace ColorTools.BrushSources
+namespace Koda.ColorTools.BrushSources
 {
     public class HslCanvasBrushSource : PickerBrushSource
     {

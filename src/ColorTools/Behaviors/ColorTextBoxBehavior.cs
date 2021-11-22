@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace ColorTools.Behaviors
+namespace Koda.ColorTools.Behaviors
 {
     // Source: http://www.dutton.me.uk/2013-07-25/how-to-select-all-wpf-textbox-text-on-focus-using-an-attached-behavior/
     // Source: https://stackoverflow.com/questions/563195/bind-textbox-on-enter-key-press

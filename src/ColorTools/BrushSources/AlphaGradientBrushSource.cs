@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace ColorTools.BrushSources
+namespace Koda.ColorTools.BrushSources
 {
     public class AlphaGradientBrushSource : GradientBrushSource
     {
