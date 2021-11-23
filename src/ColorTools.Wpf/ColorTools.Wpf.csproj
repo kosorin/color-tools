@@ -8,12 +8,27 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <AssemblyName>Koda.ColorTools.Wpf</AssemblyName>
         <RootNamespace>Koda.ColorTools.Wpf</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ColorTools\ColorTools.csproj"/>
     </ItemGroup>
+
+    <PropertyGroup>
+        <AssemblyName>Koda.ColorTools.Wpf</AssemblyName>
+        <AssemblyTitle>Color Tools WPF</AssemblyTitle>
+        <Company>David Kosorin</Company>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Koda.ColorTools.Wpf</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>David Kosorin</Authors>
+        <Description>Helper classes for working with colors and creating a color picker.</Description>
+        <Copyright>Copyright (c) 2021 David Kosorin</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/kosorin/color-tools</PackageProjectUrl>
+    </PropertyGroup>
 
 </Project>

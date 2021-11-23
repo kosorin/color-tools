@@ -7,8 +7,23 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <AssemblyName>Koda.ColorTools</AssemblyName>
         <RootNamespace>Koda.ColorTools</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AssemblyName>Koda.ColorTools</AssemblyName>
+        <AssemblyTitle>Color Tools</AssemblyTitle>
+        <Company>David Kosorin</Company>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Koda.ColorTools</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>David Kosorin</Authors>
+        <Description>Helper classes for working with colors.</Description>
+        <Copyright>Copyright (c) 2021 David Kosorin</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/kosorin/color-tools</PackageProjectUrl>
     </PropertyGroup>
 
 </Project>
