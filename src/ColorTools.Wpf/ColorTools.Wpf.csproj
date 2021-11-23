@@ -2,14 +2,18 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0-windows</TargetFramework>
-        <UseWPF>true</UseWPF>
+        <LangVersion>9.0</LangVersion>
         <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <AssemblyName>Koda.ColorTools.Wpf</AssemblyName>
         <RootNamespace>Koda.ColorTools.Wpf</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ColorTools\ColorTools.csproj" />
+        <ProjectReference Include="..\ColorTools\ColorTools.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,17 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+    
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net5.0-windows</TargetFramework>
-        <UseWPF>true</UseWPF>
+        <LangVersion>9.0</LangVersion>
         <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <AssemblyName>Koda.ColorTools.Demo</AssemblyName>
         <RootNamespace>Koda.ColorTools.Demo</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ColorTools\ColorTools.csproj" />
-        <ProjectReference Include="..\ColorTools.Wpf\ColorTools.Wpf.csproj" />
+        <ProjectReference Include="..\ColorTools\ColorTools.csproj"/>
+        <ProjectReference Include="..\ColorTools.Wpf\ColorTools.Wpf.csproj"/>
     </ItemGroup>
 
 </Project>
