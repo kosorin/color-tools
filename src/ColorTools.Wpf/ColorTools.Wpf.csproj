@@ -29,6 +29,7 @@
         <Copyright>Copyright (c) 2021 David Kosorin</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/kosorin/color-tools</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/kosorin/color-tools</RepositoryUrl>
     </PropertyGroup>
 
 </Project>
