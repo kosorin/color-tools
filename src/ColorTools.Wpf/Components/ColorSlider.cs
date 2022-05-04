@@ -157,13 +157,17 @@ namespace Koda.ColorTools.Wpf.Components
         {
             switch (args.Key)
             {
-                case Key.Left:
+                case Key.Left when Orientation == Orientation.Horizontal:
+                case Key.Down when Orientation == Orientation.Vertical:
                 case Key.PageDown:
                     MoveHandle(-1);
+                    args.Handled = true;
                     break;
-                case Key.Right:
+                case Key.Right when Orientation == Orientation.Horizontal:
+                case Key.Up when Orientation == Orientation.Vertical:
                 case Key.PageUp:
                     MoveHandle(1);
+                    args.Handled = true;
                     break;
             }
         }

@@ -253,7 +253,9 @@
 
     <Style TargetType="{x:Type components:ColorSlider}">
         <Setter Property="AlphaBrush" Value="{StaticResource AlphaBrush}" />
-        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="None" />
         <Setter Property="Height" Value="48" />
         <Setter Property="BorderBrush" Value="Gray" />
         <Setter Property="BorderThickness" Value="1" />
@@ -321,6 +323,10 @@
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="ComponentContainer" Property="BorderBrush" Value="Black" />
+                            <Setter TargetName="ComponentContainer" Property="BorderThickness" Value="2" />
+                        </Trigger>
                         <Trigger Property="Header" Value="{x:Null}">
                             <Setter TargetName="HeaderPresenter" Property="Visibility" Value="Collapsed" />
                         </Trigger>
